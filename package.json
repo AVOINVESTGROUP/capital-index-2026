@@ -1,0 +1,10 @@
+{
+  "name": "capital-index-2026",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Production-grade central intelligence layer",
+  "scripts": {
+    "docs:check": "echo docs ok",
+    "test": "echo tests not implemented yet"
+  }
+}
