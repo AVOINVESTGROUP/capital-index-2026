@@ -5,6 +5,7 @@
 __pycache__/
 .pytest_cache/
 node_modules/
+.next/
 dist/
 build/
 .venv/
@@ -21,3 +22,9 @@ secrets/
 *.key
 *.pem
 service-account*.json
+
+# Local Drive Changes probe state. This is operational state, not a fixture.
+tests/fixtures/drive-events/.page_token.json
+
+# Canonical probe path is scripts/drive_changes_probe.py.
+/drive_changes_probe.py

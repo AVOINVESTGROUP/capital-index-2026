@@ -1,0 +1,8 @@
+{
+  "decision": "allow",
+  "sensitivity_class": "BUSINESS_CONFIDENTIAL",
+  "allowed_actions": ["read_content", "extract_text"],
+  "denied_actions": ["embed", "publish_to_vault", "include_in_ai_context"],
+  "requires_approval": false,
+  "reason": "folder_policy"
+}

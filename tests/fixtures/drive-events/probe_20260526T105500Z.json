@@ -1,0 +1,18 @@
+{
+  "run_at": "2026-05-26T10:55:00+00:00",
+  "project_id": "capital-index-2026",
+  "folder_id": "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu",
+  "drive_id": null,
+  "state_path": "tests\\fixtures\\drive-events\\.page_token.json",
+  "input_page_token": "35744",
+  "output_page_token": "35744",
+  "initialized": true,
+  "counts": {
+    "changes": 0,
+    "folder_changes": 0,
+    "folder_children": 0
+  },
+  "changes": [],
+  "folder_changes": [],
+  "folder_children": []
+}

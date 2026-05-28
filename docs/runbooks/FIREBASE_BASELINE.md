@@ -63,3 +63,14 @@ firebase deploy --only firestore:rules,firestore:indexes
 3. Deploy locked Firestore rules.
 4. Create initial Firestore seed script for system_config, project_registry and source_registry.
 ```
+
+## Latest deploy verification status
+
+`firebase deploy --only firestore:rules,firestore:indexes --project capital-index-2026`
+completed successfully after Firebase CLI reauth.
+
+```text
+firestore.rules compiled successfully
+firestore.indexes.json deployed successfully for (default)
+rules released to cloud.firestore
+```

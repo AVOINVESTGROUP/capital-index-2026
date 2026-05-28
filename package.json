@@ -3,8 +3,17 @@
   "private": true,
   "version": "0.1.0",
   "description": "Production-grade central intelligence layer",
+  "packageManager": "pnpm@8.15.4",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
+    "admin:web": "pnpm --filter @capital-index/admin-web dev",
+    "admin:web:build": "pnpm --filter @capital-index/admin-web build",
     "docs:check": "echo docs ok",
     "test": "echo tests not implemented yet"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
   }
 }

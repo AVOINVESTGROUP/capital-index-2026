@@ -1,0 +1,48 @@
+{
+  "schema_version": "capital.policy_decision_batch.v1",
+  "source": "policy_engine_worker",
+  "input_batch_ref": "tests/fixtures/drive-events/file_metadata_probe_20260526T105738Z.json",
+  "run_at": "2026-05-26T15:27:46+00:00",
+  "gcp_project_id": "capital-index-2026",
+  "project_id": "capital_index",
+  "source_registry_id": "drive_event_test",
+  "counts": {
+    "input_file_upserts": 1,
+    "policy_decisions": 1,
+    "review_required": 0
+  },
+  "policy_decisions": [
+    {
+      "schema_version": "capital.policy_decision.v1",
+      "decision_id": "policy_7f56e9fe6ddee8aff5f36794",
+      "source": "policy_engine_worker",
+      "source_load_id": "metadata_5bb73f5d7a2f4403ed45068a",
+      "source_event_id": "evt_888e52cfd457eb5c126b00bf",
+      "trace_id": "trace_888e52cfd457eb5c126b00bf",
+      "idempotency_key": "888e52cfd457eb5c126b00bfe247f7d6ec1ed7e8abb0cd74c720221c90340b19",
+      "raw_metadata_ref": "tests/fixtures/drive-events/file_metadata_probe_20260526T105738Z.json#/file_upserts/0",
+      "decided_at": "2026-05-26T15:27:46+00:00",
+      "policy_snapshot_id": "local_seed_baseline_v1",
+      "policy_id": "folder_policies/drive_event_test",
+      "policy_name": "Drive Events POC Test Folder",
+      "gcp_project_id": "capital-index-2026",
+      "project_id": "capital_index",
+      "source_registry_id": "drive_event_test",
+      "file_id": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM",
+      "sensitivity_class": "PUBLIC_INTERNAL",
+      "allowed_actions": [
+        "read_metadata",
+        "read_content"
+      ],
+      "denied_actions": [
+        "embed",
+        "publish_to_vault",
+        "include_in_ai_context"
+      ],
+      "approval_required_for": [],
+      "review_required": false,
+      "review_reason": null,
+      "next_action": "content_extraction_candidate"
+    }
+  ]
+}

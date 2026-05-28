@@ -1,0 +1,11 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - services/entity-extractor/Dockerfile
+      - -t
+      - europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/entity-extractor:sheet-classifier-20260528
+      - .
+images:
+  - europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/entity-extractor:sheet-classifier-20260528

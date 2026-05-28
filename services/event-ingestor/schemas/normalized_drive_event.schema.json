@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.normalized_drive_event.v1",
+  "title": "CAPITAL INDEX normalized Drive event",
+  "type": "object",
+  "required": [
+    "event_id",
+    "trace_id",
+    "idempotency_key",
+    "source",
+    "source_event_type",
+    "event_type",
+    "observed_at",
+    "gcp_project_id",
+    "project_id",
+    "file_id",
+    "file",
+    "drive",
+    "raw_payload_ref",
+    "next_action",
+    "review_required"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "pattern": "^evt_[a-f0-9]{24}$" },
+    "trace_id": { "type": "string", "pattern": "^trace_[a-f0-9]{24}$" },
+    "idempotency_key": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "source": { "const": "drive_changes" },
+    "source_registry_id": { "type": "string" },
+    "source_event_type": { "type": "string" },
+    "event_type": {
+      "type": "string",
+      "enum": ["drive.file.changed", "drive.file.removed"]
+    },
+    "observed_at": { "type": "string" },
+    "gcp_project_id": { "type": "string" },
+    "project_id": { "type": "string" },
+    "file_id": { "type": ["string", "null"] },
+    "file": {
+      "type": "object",
+      "required": ["id", "name", "mime_type", "parents", "trashed", "modified_time", "web_view_link"],
+      "properties": {
+        "id": { "type": ["string", "null"] },
+        "name": { "type": ["string", "null"] },
+        "mime_type": { "type": ["string", "null"] },
+        "parents": { "type": "array", "items": { "type": "string" } },
+        "trashed": { "type": "boolean" },
+        "modified_time": { "type": ["string", "null"] },
+        "web_view_link": { "type": ["string", "null"] }
+      }
+    },
+    "drive": {
+      "type": "object",
+      "required": ["folder_id", "input_page_token", "output_page_token"],
+      "properties": {
+        "folder_id": { "type": ["string", "null"] },
+        "input_page_token": { "type": ["string", "null"] },
+        "output_page_token": { "type": ["string", "null"] }
+      }
+    },
+    "raw_payload_ref": { "type": "string" },
+    "next_action": { "type": "string" },
+    "review_required": { "type": "boolean" },
+    "review_reason": { "type": ["string", "null"] }
+  }
+}

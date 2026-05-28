@@ -1,0 +1,28 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: capital-policy-engine
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "2"
+    spec:
+      serviceAccountName: capital-policy-engine@capital-index-2026.iam.gserviceaccount.com
+      containers:
+        - image: europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/policy-engine-worker:latest
+          env:
+            - name: GCP_PROJECT_ID
+              value: capital-index-2026
+            - name: FIRESTORE_DATABASE
+              value: (default)
+            - name: WRITE_ENABLED
+              value: "false"
+            - name: PUBLISH_EXTRACTION_JOBS
+              value: "false"
+            - name: EXTRACTION_JOBS_TOPIC
+              value: capital.jobs.extraction
+            - name: WORKER_VERSION
+              value: policy-engine-extraction-e2e-verified

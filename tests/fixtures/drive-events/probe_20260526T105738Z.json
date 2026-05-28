@@ -1,0 +1,140 @@
+{
+  "run_at": "2026-05-26T10:57:38+00:00",
+  "project_id": "capital-index-2026",
+  "folder_id": "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu",
+  "drive_id": null,
+  "state_path": "tests\\fixtures\\drive-events\\.page_token.json",
+  "input_page_token": "35744",
+  "output_page_token": "35765",
+  "initialized": false,
+  "counts": {
+    "changes": 5,
+    "folder_changes": 1,
+    "folder_children": 1
+  },
+  "changes": [
+    {
+      "file": {
+        "mimeType": "application/octet-stream",
+        "parents": [
+          "1ufbkt1s9Rpxr2-E1Ru1yKubCWptiHn6w"
+        ],
+        "webViewLink": "https://drive.google.com/file/d/1AjJu-FD8OK8PMSrMvVbq8EqOWvWLKF0h/view?usp=drivesdk",
+        "id": "1AjJu-FD8OK8PMSrMvVbq8EqOWvWLKF0h",
+        "name": "event_logs.ajson",
+        "trashed": false,
+        "modifiedTime": "2026-05-26T10:55:45.718Z"
+      },
+      "type": "file",
+      "changeType": "file",
+      "time": "2026-05-26T10:55:58.699Z",
+      "removed": false,
+      "fileId": "1AjJu-FD8OK8PMSrMvVbq8EqOWvWLKF0h"
+    },
+    {
+      "file": {
+        "mimeType": "application/vnd.google-apps.folder",
+        "parents": [
+          "0AFSzbPMvsjXeUk9PVA"
+        ],
+        "webViewLink": "https://drive.google.com/drive/folders/1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu",
+        "id": "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu",
+        "name": "CAPITAL_INDEX_EVENT_TEST",
+        "trashed": false,
+        "modifiedTime": "2026-05-26T06:43:40.572Z"
+      },
+      "type": "file",
+      "changeType": "file",
+      "time": "2026-05-26T10:56:01.710Z",
+      "removed": false,
+      "fileId": "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu"
+    },
+    {
+      "file": {
+        "mimeType": "application/vnd.google-apps.document",
+        "parents": [
+          "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu"
+        ],
+        "webViewLink": "https://docs.google.com/document/d/1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM/edit?usp=drivesdk",
+        "id": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM",
+        "name": "drive-probe-test-001",
+        "trashed": false,
+        "modifiedTime": "2026-05-26T10:56:32.151Z"
+      },
+      "type": "file",
+      "changeType": "file",
+      "time": "2026-05-26T10:56:55.702Z",
+      "removed": false,
+      "fileId": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM"
+    },
+    {
+      "file": {
+        "mimeType": "application/vnd.google-apps.document",
+        "parents": [
+          "1No6LMuCpH2T2jmGL7hnFlMto-0gnnHpq"
+        ],
+        "webViewLink": "https://docs.google.com/document/d/16CHJ-JiwCb-qf7leWgSW0NBOnEbXWWJHNcl0vjYgjKg/edit?usp=drivesdk",
+        "id": "16CHJ-JiwCb-qf7leWgSW0NBOnEbXWWJHNcl0vjYgjKg",
+        "name": "AI_TODAY_CONTEXT",
+        "trashed": false,
+        "modifiedTime": "2026-05-26T10:55:25.275Z"
+      },
+      "type": "file",
+      "changeType": "file",
+      "time": "2026-05-26T10:57:04.890Z",
+      "removed": false,
+      "fileId": "16CHJ-JiwCb-qf7leWgSW0NBOnEbXWWJHNcl0vjYgjKg"
+    },
+    {
+      "file": {
+        "mimeType": "application/vnd.google-apps.spreadsheet",
+        "parents": [
+          "1No6LMuCpH2T2jmGL7hnFlMto-0gnnHpq"
+        ],
+        "webViewLink": "https://docs.google.com/spreadsheets/d/1C72TfkF6ReGS9wTbewzqDW4NaK_omSy2l_ZmX1K-WQ0/edit?usp=drivesdk",
+        "id": "1C72TfkF6ReGS9wTbewzqDW4NaK_omSy2l_ZmX1K-WQ0",
+        "name": "AI_Bridge_Log_Spreadsheet",
+        "trashed": false,
+        "modifiedTime": "2026-05-26T10:55:27.453Z"
+      },
+      "type": "file",
+      "changeType": "file",
+      "time": "2026-05-26T10:57:30.263Z",
+      "removed": false,
+      "fileId": "1C72TfkF6ReGS9wTbewzqDW4NaK_omSy2l_ZmX1K-WQ0"
+    }
+  ],
+  "folder_changes": [
+    {
+      "file": {
+        "mimeType": "application/vnd.google-apps.document",
+        "parents": [
+          "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu"
+        ],
+        "webViewLink": "https://docs.google.com/document/d/1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM/edit?usp=drivesdk",
+        "id": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM",
+        "name": "drive-probe-test-001",
+        "trashed": false,
+        "modifiedTime": "2026-05-26T10:56:32.151Z"
+      },
+      "type": "file",
+      "changeType": "file",
+      "time": "2026-05-26T10:56:55.702Z",
+      "removed": false,
+      "fileId": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM"
+    }
+  ],
+  "folder_children": [
+    {
+      "mimeType": "application/vnd.google-apps.document",
+      "parents": [
+        "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu"
+      ],
+      "webViewLink": "https://docs.google.com/document/d/1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM/edit?usp=drivesdk",
+      "id": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM",
+      "name": "drive-probe-test-001",
+      "trashed": false,
+      "modifiedTime": "2026-05-26T10:56:32.151Z"
+    }
+  ]
+}

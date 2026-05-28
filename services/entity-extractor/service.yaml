@@ -1,0 +1,32 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: capital-entity-extractor
+spec:
+  template:
+    spec:
+      containers:
+        - image: europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/entity-extractor:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GCP_PROJECT_ID
+              value: capital-index-2026
+            - name: FIRESTORE_DATABASE
+              value: "(default)"
+            - name: WRITE_ENABLED
+              value: "false"
+            - name: REQUEST_WRITE_ENABLED
+              value: "false"
+            - name: AI_PROVIDER_ENABLED
+              value: "false"
+            - name: SHEET_CLASSIFIER_ENABLED
+              value: "false"
+            - name: AI_PROVIDER
+              value: "gemini"
+            - name: OPENAI_API_KEY_SECRET_NAME
+              value: capital-openai-api-key
+            - name: GEMINI_API_KEY_SECRET_NAME
+              value: capital-gemini-api-key
+            - name: GEMINI_MODEL_ID
+              value: gemini-2.5-flash

@@ -1,0 +1,17 @@
+kind: "AppStack"
+schemaVersion: "v1"
+runConfig:
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 1024
+scripts:
+  buildCommand: pnpm build
+  runCommand: pnpm start
+env:
+  - variable: NEXT_TELEMETRY_DISABLED
+    value: "1"
+  - variable: PORT
+    value: "8080"
+outputFiles:
+  serverApp:
+    include: [.]

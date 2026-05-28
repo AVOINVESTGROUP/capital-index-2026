@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.extracted_text.v1",
+  "title": "CAPITAL INDEX extracted text result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "file_id",
+    "plan_id",
+    "sensitivity_class",
+    "text_only",
+    "embedding_allowed",
+    "vault_publish_allowed",
+    "ai_context_allowed",
+    "doc_title",
+    "char_count",
+    "text",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": { "const": "capital.extracted_text.v1" },
+    "file_id": { "type": ["string", "null"] },
+    "plan_id": { "type": "string", "pattern": "^plan_[a-f0-9]{24}$" },
+    "sensitivity_class": { "type": "string" },
+    "text_only": { "type": "boolean" },
+    "embedding_allowed": { "type": "boolean" },
+    "vault_publish_allowed": { "type": "boolean" },
+    "ai_context_allowed": { "type": "boolean" },
+    "doc_title": { "type": "string" },
+    "char_count": { "type": "integer", "minimum": 0 },
+    "text": { "type": "string" },
+    "next_action": {
+      "type": "string",
+      "enum": ["classify", "review_required"]
+    }
+  }
+}

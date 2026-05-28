@@ -1,8 +1,62 @@
 {
+  "hosting": {
+    "site": "capital-index-2026",
+    "public": "apps/admin-web/public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "/review",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/api/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "capital-admin-web-run",
+          "region": "europe-west4"
+        }
+      }
+    ]
+  },
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "apphosting": [
+    {
+      "backendId": "capital-admin-web",
+      "rootDir": "apps/admin-web",
+      "ignore": [
+        "package-lock.json",
+        "/package-lock.json",
+        "/apps/admin-web/package-lock.json",
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        ".next"
+      ]
+    }
+  ],
   "emulators": {
     "firestore": {
       "port": 8080

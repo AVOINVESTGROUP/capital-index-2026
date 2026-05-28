@@ -1,0 +1,56 @@
+{
+  "schema_version": "capital.file_metadata_batch.v1",
+  "source": "metadata_loader",
+  "input_batch_ref": "tests/fixtures/drive-events/normalized_probe_20260526T105738Z.json",
+  "run_at": "2026-05-26T15:22:05+00:00",
+  "gcp_project_id": "capital-index-2026",
+  "project_id": "capital_index",
+  "source_registry_id": "drive_event_test",
+  "counts": {
+    "input_events": 1,
+    "file_upserts": 1,
+    "review_required": 0
+  },
+  "file_upserts": [
+    {
+      "schema_version": "capital.file_metadata_upsert.v1",
+      "operation": "upsert",
+      "load_id": "metadata_5bb73f5d7a2f4403ed45068a",
+      "source": "metadata_loader",
+      "source_event_id": "evt_888e52cfd457eb5c126b00bf",
+      "trace_id": "trace_888e52cfd457eb5c126b00bf",
+      "idempotency_key": "888e52cfd457eb5c126b00bfe247f7d6ec1ed7e8abb0cd74c720221c90340b19",
+      "raw_event_ref": "tests/fixtures/drive-events/normalized_probe_20260526T105738Z.json#/events/0",
+      "loaded_at": "2026-05-26T15:22:05+00:00",
+      "metadata_status": "base_loaded",
+      "authoritative_refetch_status": "pending",
+      "next_action": "policy_check",
+      "review_required": false,
+      "review_reason": null,
+      "file": {
+        "file_id": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM",
+        "name": "drive-probe-test-001",
+        "mime_type": "application/vnd.google-apps.document",
+        "parents": [
+          "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu"
+        ],
+        "trashed": false,
+        "modified_time": "2026-05-26T10:56:32.151Z",
+        "web_view_link": "https://docs.google.com/document/d/1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM/edit?usp=drivesdk",
+        "gcp_project_id": "capital-index-2026",
+        "project_id": "capital_index",
+        "source_registry_id": "drive_event_test",
+        "source": "drive_changes",
+        "observed_at": "2026-05-26T10:56:55.702Z",
+        "last_event_type": "drive.file.changed"
+      },
+      "authoritative_fields": {
+        "owners": null,
+        "head_revision_id": null,
+        "drive_labels": null,
+        "capabilities": null,
+        "permissions_summary": null
+      }
+    }
+  ]
+}

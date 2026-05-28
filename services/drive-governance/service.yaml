@@ -1,0 +1,28 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: capital-drive-governance
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+    spec:
+      serviceAccountName: capital-drive-governance@capital-index-2026.iam.gserviceaccount.com
+      containers:
+        - image: europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/drive-governance:latest
+          env:
+            - name: GCP_PROJECT_ID
+              value: capital-index-2026
+            - name: FIRESTORE_DATABASE
+              value: (default)
+            - name: WRITE_ENABLED
+              value: "false"
+            - name: REQUEST_WRITE_ENABLED
+              value: "true"
+            - name: INVENTORY_LIMIT
+              value: "250"
+            - name: WORKER_VERSION
+              value: drive-governance-scheduled-mvp

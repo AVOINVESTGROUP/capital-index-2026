@@ -1,0 +1,46 @@
+{
+  "schema_version": "capital.extracted_text_batch.v1",
+  "source": "content_extractor",
+  "input_batch_ref": "fixture://entity_gate",
+  "run_at": "2026-05-27T00:00:00Z",
+  "gcp_project_id": "capital-index-2026",
+  "project_id": "capital_index",
+  "source_registry_id": "drive_event_test",
+  "counts": {
+    "input_policy_decisions": 3,
+    "extracted_text": 3,
+    "review_required": 0
+  },
+  "extracted_text": [
+    {
+      "schema_version": "capital.extracted_text.v1",
+      "file_id": "file_active_001",
+      "plan_id": "extract_active",
+      "source_decision_id": "policy_active",
+      "sensitivity_class": "PUBLIC_INTERNAL",
+      "char_count": 120,
+      "text": "Active project source text.",
+      "next_action": "classify"
+    },
+    {
+      "schema_version": "capital.extracted_text.v1",
+      "file_id": "file_duplicate_001",
+      "plan_id": "extract_duplicate",
+      "source_decision_id": "policy_duplicate",
+      "sensitivity_class": "PUBLIC_INTERNAL",
+      "char_count": 120,
+      "text": "Duplicate project source text.",
+      "next_action": "classify"
+    },
+    {
+      "schema_version": "capital.extracted_text.v1",
+      "file_id": "file_missing_status_001",
+      "plan_id": "extract_missing_status",
+      "source_decision_id": "policy_missing_status",
+      "sensitivity_class": "PUBLIC_INTERNAL",
+      "char_count": 80,
+      "text": "Missing source status text.",
+      "next_action": "classify"
+    }
+  ]
+}

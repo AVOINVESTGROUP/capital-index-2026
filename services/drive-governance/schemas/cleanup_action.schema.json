@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.cleanup_action.v1",
+  "title": "CAPITAL INDEX cleanup action audit record",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "action_id",
+    "cleanup_id",
+    "file_id",
+    "actor_id",
+    "actor_type",
+    "action",
+    "previous_source_status",
+    "new_source_status",
+    "drive_mutation",
+    "drive_mutation_allowed",
+    "note",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "capital.cleanup_action.v1" },
+    "action_id": { "type": "string", "pattern": "^cleanup_action_[a-f0-9]{24}$" },
+    "cleanup_id": { "type": "string", "pattern": "^cleanup_[a-f0-9]{24}$" },
+    "file_id": { "type": "string", "minLength": 1 },
+    "actor_id": { "type": "string", "minLength": 1 },
+    "actor_type": { "type": "string", "enum": ["human_operator", "system"] },
+    "action": {
+      "type": "string",
+      "enum": [
+        "keep_active",
+        "mark_duplicate",
+        "archive",
+        "move_to_review",
+        "do_not_index",
+        "ignore"
+      ]
+    },
+    "previous_source_status": { "type": "string" },
+    "new_source_status": { "type": "string" },
+    "drive_mutation": { "type": "string", "enum": ["none", "label", "move", "archive", "delete"] },
+    "drive_mutation_allowed": { "type": "boolean" },
+    "policy_snapshot_id": { "type": ["string", "null"] },
+    "approval_decision_id": { "type": ["string", "null"] },
+    "note": { "type": "string" },
+    "created_at": { "type": "string" }
+  },
+  "additionalProperties": false
+}

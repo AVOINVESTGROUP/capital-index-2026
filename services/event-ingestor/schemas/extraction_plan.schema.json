@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.extraction_plan.v1",
+  "title": "CAPITAL INDEX extraction plan",
+  "type": "object",
+  "required": [
+    "plan_id",
+    "file_id",
+    "sensitivity_class",
+    "can_read_content",
+    "can_extract_text",
+    "text_only",
+    "embedding_allowed",
+    "vault_publish_allowed",
+    "ai_context_allowed",
+    "next_action"
+  ],
+  "properties": {
+    "plan_id": { "type": "string", "pattern": "^plan_[a-f0-9]{24}$" },
+    "file_id": { "type": ["string", "null"] },
+    "sensitivity_class": { "type": "string" },
+    "can_read_content": { "type": "boolean" },
+    "can_extract_text": { "type": "boolean" },
+    "text_only": { "type": "boolean" },
+    "embedding_allowed": { "type": "boolean" },
+    "vault_publish_allowed": { "type": "boolean" },
+    "ai_context_allowed": { "type": "boolean" },
+    "next_action": {
+      "type": "string",
+      "enum": ["extract_text", "blocked", "review_required"]
+    }
+  }
+}

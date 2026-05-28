@@ -1,0 +1,35 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: capital-event-ingestor
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "1"
+    spec:
+      serviceAccountName: capital-event-ingestor@capital-index-2026.iam.gserviceaccount.com
+      containers:
+        - image: europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/event-ingestor:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GCP_PROJECT_ID
+              value: capital-index-2026
+            - name: FIRESTORE_DATABASE
+              value: (default)
+            - name: WRITE_ENABLED
+              value: "false"
+            - name: PUBLISH_METADATA_JOBS
+              value: "false"
+            - name: METADATA_JOBS_TOPIC
+              value: capital.jobs.metadata
+            - name: WORKER_VERSION
+              value: event-ingestor-e2e-verified
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi

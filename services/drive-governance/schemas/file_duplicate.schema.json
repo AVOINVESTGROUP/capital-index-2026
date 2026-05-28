@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.file_duplicate.v1",
+  "title": "CAPITAL INDEX file duplicate cluster",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cluster_id",
+    "cluster_type",
+    "canonical_file_id",
+    "member_file_ids",
+    "confidence",
+    "evidence",
+    "action",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "capital.file_duplicate.v1" },
+    "cluster_id": { "type": "string", "pattern": "^dup_[a-f0-9]{24}$" },
+    "cluster_type": {
+      "type": "string",
+      "enum": [
+        "exact_duplicate",
+        "near_duplicate",
+        "version_family",
+        "template_reuse",
+        "evidence_copy"
+      ]
+    },
+    "canonical_file_id": { "type": ["string", "null"] },
+    "member_file_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "signals",
+        "name_similarity",
+        "text_similarity",
+        "hash_match",
+        "same_parent",
+        "newest_file_id"
+      ],
+      "properties": {
+        "signals": { "type": "array", "items": { "type": "string" } },
+        "name_similarity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "text_similarity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "hash_match": { "type": ["boolean", "null"] },
+        "same_parent": { "type": ["boolean", "null"] },
+        "newest_file_id": { "type": ["string", "null"] },
+        "details": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "action": { "type": "string", "enum": ["none", "archive_suggested", "review_required"] },
+    "created_at": { "type": "string" },
+    "updated_at": { "type": "string" }
+  },
+  "additionalProperties": false
+}

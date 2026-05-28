@@ -1,0 +1,32 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: capital-metadata-loader
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "2"
+    spec:
+      serviceAccountName: capital-metadata-loader@capital-index-2026.iam.gserviceaccount.com
+      containers:
+        - image: europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/metadata-loader:latest
+          env:
+            - name: GCP_PROJECT_ID
+              value: capital-index-2026
+            - name: FIRESTORE_DATABASE
+              value: (default)
+            - name: WRITE_ENABLED
+              value: "false"
+            - name: DRIVE_REFETCH_ENABLED
+              value: "false"
+            - name: DRIVE_SUBJECT_EMAIL
+              value: office@integrayachtsuae.com
+            - name: PUBLISH_POLICY_JOBS
+              value: "false"
+            - name: POLICY_JOBS_TOPIC
+              value: capital.jobs.policy
+            - name: WORKER_VERSION
+              value: metadata-loader-policy-e2e-verified

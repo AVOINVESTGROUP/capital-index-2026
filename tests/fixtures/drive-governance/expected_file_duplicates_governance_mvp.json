@@ -1,0 +1,28 @@
+{
+  "schema_version": "capital.file_duplicate_batch.v1",
+  "fixture_id": "governance_mvp_20260527",
+  "file_duplicates": [
+    {
+      "schema_version": "capital.file_duplicate.v1",
+      "cluster_id": "dup_000000000000000000000001",
+      "cluster_type": "exact_duplicate",
+      "canonical_file_id": "file_offer_current_001",
+      "member_file_ids": ["file_offer_current_001", "file_offer_copy_001"],
+      "confidence": 0.99,
+      "evidence": {
+        "signals": ["same_text_hash", "same_size", "same_parent", "copy_name_pattern"],
+        "name_similarity": 0.99,
+        "text_similarity": 1.0,
+        "hash_match": true,
+        "same_parent": true,
+        "newest_file_id": "file_offer_copy_001",
+        "details": {
+          "canonical_reason": "non_copy_name_preferred"
+        }
+      },
+      "action": "review_required",
+      "created_at": "2026-05-27T00:00:00Z",
+      "updated_at": "2026-05-27T00:00:00Z"
+    }
+  ]
+}

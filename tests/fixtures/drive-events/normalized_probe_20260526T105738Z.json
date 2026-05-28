@@ -1,0 +1,51 @@
+{
+  "schema_version": "capital.event_batch.v1",
+  "source": "drive_changes",
+  "fixture_path": "tests/fixtures/drive-events/probe_20260526T105738Z.json",
+  "run_at": "2026-05-26T10:57:38+00:00",
+  "gcp_project_id": "capital-index-2026",
+  "project_id": "capital_index",
+  "source_registry_id": "drive_event_test",
+  "folder_id": "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu",
+  "counts": {
+    "input_changes": 5,
+    "folder_changes": 1,
+    "events": 1,
+    "review_required": 0
+  },
+  "events": [
+    {
+      "event_id": "evt_888e52cfd457eb5c126b00bf",
+      "trace_id": "trace_888e52cfd457eb5c126b00bf",
+      "idempotency_key": "888e52cfd457eb5c126b00bfe247f7d6ec1ed7e8abb0cd74c720221c90340b19",
+      "source": "drive_changes",
+      "source_registry_id": "drive_event_test",
+      "source_event_type": "file",
+      "event_type": "drive.file.changed",
+      "observed_at": "2026-05-26T10:56:55.702Z",
+      "gcp_project_id": "capital-index-2026",
+      "project_id": "capital_index",
+      "file_id": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM",
+      "file": {
+        "id": "1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM",
+        "name": "drive-probe-test-001",
+        "mime_type": "application/vnd.google-apps.document",
+        "parents": [
+          "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu"
+        ],
+        "trashed": false,
+        "modified_time": "2026-05-26T10:56:32.151Z",
+        "web_view_link": "https://docs.google.com/document/d/1PsAttUlqj30HTd79BK3cMBKTSVprvs9cU4jfPfgX0fM/edit?usp=drivesdk"
+      },
+      "drive": {
+        "folder_id": "1YHJ0YY4I_8QulKJR2O5S972_BK93NqMu",
+        "input_page_token": "35744",
+        "output_page_token": "35765"
+      },
+      "raw_payload_ref": "tests/fixtures/drive-events/probe_20260526T105738Z.json#/folder_changes/0",
+      "next_action": "load_metadata",
+      "review_required": false,
+      "review_reason": null
+    }
+  ]
+}

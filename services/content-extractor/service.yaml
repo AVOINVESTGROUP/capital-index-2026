@@ -1,0 +1,34 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: capital-content-extractor
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "2"
+    spec:
+      serviceAccountName: capital-content-extractor@capital-index-2026.iam.gserviceaccount.com
+      containers:
+        - image: europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/content-extractor:latest
+          env:
+            - name: GCP_PROJECT_ID
+              value: capital-index-2026
+            - name: FIRESTORE_DATABASE
+              value: (default)
+            - name: WRITE_ENABLED
+              value: "false"
+            - name: DOCS_READ_ENABLED
+              value: "false"
+            - name: SHEETS_READ_ENABLED
+              value: "false"
+            - name: DRIVE_READ_ENABLED
+              value: "false"
+            - name: REVIEW_QUEUE_ENABLED
+              value: "false"
+            - name: DOCS_SUBJECT_EMAIL
+              value: office@integrayachtsuae.com
+            - name: WORKER_VERSION
+              value: content-extractor-multiformat

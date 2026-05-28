@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.entity_extraction_candidate.v1",
+  "title": "CAPITAL INDEX entity extraction candidate",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "candidate_id",
+    "file_id",
+    "raw_extracted_text_ref",
+    "created_at",
+    "char_count",
+    "source_status",
+    "index_eligible",
+    "human_block",
+    "gate_allowed",
+    "gate_reason",
+    "gate_reasons",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": { "const": "capital.entity_extraction_candidate.v1" },
+    "candidate_id": {
+      "type": "string",
+      "pattern": "^entity_candidate_[a-f0-9]{24}$"
+    },
+    "file_id": { "type": ["string", "null"] },
+    "project_id": { "type": ["string", "null"] },
+    "source_registry_id": { "type": ["string", "null"] },
+    "source_decision_id": { "type": ["string", "null"] },
+    "source_extraction_plan_id": { "type": ["string", "null"] },
+    "raw_extracted_text_ref": { "type": "string" },
+    "created_at": { "type": "string" },
+    "char_count": { "type": "integer", "minimum": 0 },
+    "sensitivity_class": { "type": ["string", "null"] },
+    "source_status": {
+      "type": ["string", "null"],
+      "enum": [
+        null,
+        "active",
+        "candidate_duplicate",
+        "candidate_stale",
+        "candidate_empty",
+        "candidate_archive",
+        "do_not_index",
+        "needs_human_review"
+      ]
+    },
+    "index_eligible": { "type": ["boolean", "null"] },
+    "human_block": { "type": "boolean" },
+    "gate_allowed": { "type": "boolean" },
+    "gate_reason": {
+      "type": "string",
+      "enum": ["allowed", "blocked_by_drive_governance"]
+    },
+    "gate_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "source_status_not_active",
+          "index_eligible_not_true",
+          "human_block"
+        ]
+      }
+    },
+    "next_action": {
+      "type": "string",
+      "enum": ["extract_entities", "blocked"]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,43 @@
+{
+  "spreadsheetId": "sheet_test_001",
+  "properties": {
+    "title": "CAPITAL deals tracker"
+  },
+  "sheets": [
+    {
+      "properties": {
+        "title": "Deals"
+      },
+      "data": [
+        {
+          "rowData": [
+            {
+              "values": [
+                { "formattedValue": "Project" },
+                { "formattedValue": "Client" },
+                { "formattedValue": "Amount" },
+                { "formattedValue": "Status" }
+              ]
+            },
+            {
+              "values": [
+                { "formattedValue": "Integra Motors" },
+                { "formattedValue": "Client A" },
+                { "formattedValue": "120000" },
+                { "formattedValue": "active" }
+              ]
+            },
+            {
+              "values": [
+                { "formattedValue": "Kvartal" },
+                { "formattedValue": "Client B" },
+                { "formattedValue": "80000" },
+                { "formattedValue": "pending" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

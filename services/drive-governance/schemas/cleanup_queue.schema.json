@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.cleanup_queue.v1",
+  "title": "CAPITAL INDEX cleanup queue recommendation",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cleanup_id",
+    "file_id",
+    "project_id",
+    "source_status",
+    "reason",
+    "recommended_action",
+    "confidence",
+    "evidence",
+    "policy_snapshot_id",
+    "human_approval_required",
+    "status",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "capital.cleanup_queue.v1" },
+    "cleanup_id": { "type": "string", "pattern": "^cleanup_[a-f0-9]{24}$" },
+    "file_id": { "type": "string", "minLength": 1 },
+    "project_id": { "type": ["string", "null"] },
+    "source_registry_id": { "type": ["string", "null"] },
+    "source_status": {
+      "type": "string",
+      "enum": [
+        "candidate_duplicate",
+        "candidate_stale",
+        "candidate_empty",
+        "candidate_archive",
+        "needs_human_review"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "duplicate",
+        "near_duplicate",
+        "stale",
+        "empty",
+        "orphaned",
+        "version_superseded",
+        "unknown_project",
+        "temporary_name"
+      ]
+    },
+    "recommended_action": {
+      "type": "string",
+      "enum": [
+        "keep_active",
+        "mark_duplicate",
+        "archive",
+        "move_to_review",
+        "do_not_index",
+        "needs_review"
+      ]
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "signals",
+        "matched_file_ids",
+        "name_similarity",
+        "text_similarity",
+        "age_days",
+        "modified_at",
+        "size"
+      ],
+      "properties": {
+        "signals": { "type": "array", "items": { "type": "string" } },
+        "matched_file_ids": { "type": "array", "items": { "type": "string" } },
+        "name_similarity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "text_similarity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "age_days": { "type": ["integer", "null"], "minimum": 0 },
+        "modified_at": { "type": ["string", "null"] },
+        "size": { "type": ["integer", "null"], "minimum": 0 },
+        "details": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "policy_snapshot_id": { "type": "string" },
+    "human_approval_required": { "const": true },
+    "status": {
+      "type": "string",
+      "enum": ["open", "approved", "rejected", "ignored", "applied"]
+    },
+    "created_at": { "type": "string" },
+    "resolved_at": { "type": ["string", "null"] },
+    "resolved_by": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

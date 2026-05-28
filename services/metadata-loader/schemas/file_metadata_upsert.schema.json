@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.file_metadata_upsert.v1",
+  "title": "CAPITAL INDEX file metadata upsert",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "operation",
+    "load_id",
+    "source",
+    "source_event_id",
+    "trace_id",
+    "idempotency_key",
+    "raw_event_ref",
+    "loaded_at",
+    "metadata_status",
+    "authoritative_refetch_status",
+    "next_action",
+    "review_required",
+    "file",
+    "authoritative_fields"
+  ],
+  "properties": {
+    "schema_version": { "const": "capital.file_metadata_upsert.v1" },
+    "operation": { "const": "upsert" },
+    "load_id": { "type": "string", "pattern": "^metadata_[a-f0-9]{24}$" },
+    "source": { "const": "metadata_loader" },
+    "source_event_id": { "type": ["string", "null"] },
+    "trace_id": { "type": ["string", "null"] },
+    "idempotency_key": { "type": ["string", "null"] },
+    "raw_event_ref": { "type": "string" },
+    "loaded_at": { "type": "string" },
+    "metadata_status": { "const": "base_loaded" },
+    "authoritative_refetch_status": { "const": "pending" },
+    "next_action": { "type": "string" },
+    "review_required": { "type": "boolean" },
+    "review_reason": { "type": ["string", "null"] },
+    "file": {
+      "type": "object",
+      "required": [
+        "file_id",
+        "name",
+        "mime_type",
+        "parents",
+        "trashed",
+        "modified_time",
+        "web_view_link",
+        "gcp_project_id",
+        "project_id",
+        "source_registry_id",
+        "source",
+        "observed_at",
+        "last_event_type"
+      ],
+      "properties": {
+        "file_id": { "type": ["string", "null"] },
+        "name": { "type": ["string", "null"] },
+        "mime_type": { "type": ["string", "null"] },
+        "parents": { "type": "array", "items": { "type": "string" } },
+        "trashed": { "type": "boolean" },
+        "modified_time": { "type": ["string", "null"] },
+        "web_view_link": { "type": ["string", "null"] },
+        "gcp_project_id": { "type": ["string", "null"] },
+        "project_id": { "type": ["string", "null"] },
+        "source_registry_id": { "type": ["string", "null"] },
+        "source": { "type": ["string", "null"] },
+        "observed_at": { "type": ["string", "null"] },
+        "last_event_type": { "type": ["string", "null"] }
+      }
+    },
+    "authoritative_fields": {
+      "type": "object",
+      "required": [
+        "owners",
+        "head_revision_id",
+        "drive_labels",
+        "capabilities",
+        "permissions_summary"
+      ],
+      "properties": {
+        "owners": { "type": ["array", "null"], "items": { "type": "string" } },
+        "head_revision_id": { "type": ["string", "null"] },
+        "drive_labels": { "type": ["object", "null"] },
+        "capabilities": { "type": ["object", "null"] },
+        "permissions_summary": { "type": ["object", "null"] }
+      }
+    }
+  }
+}

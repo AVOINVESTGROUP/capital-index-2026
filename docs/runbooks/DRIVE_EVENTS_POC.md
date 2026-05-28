@@ -31,6 +31,41 @@ Workspace reader SA: capital-workspace-reader@capital-index-2026.iam.gserviceacc
 Vault writer SA: capital-vault-writer@capital-index-2026.iam.gserviceaccount.com
 ```
 
+## Current result
+
+```text
+Workspace Events API: paused
+Drive Changes API fallback: verified
+Decision record: docs/adr/0002-drive-ingestion-mode.md
+Canonical probe script: scripts/drive_changes_probe.py
+```
+
+Observed probe runs:
+
+```text
+tests/fixtures/drive-events/probe_20260526T105500Z.json
+changes: 0
+folder_changes: 0
+folder_children: 0
+
+tests/fixtures/drive-events/probe_20260526T105738Z.json
+changes: 5
+folder_changes: 1
+folder_children: 1
+```
+
+`.page_token.json` is local operational state and must not be committed.
+
+Normalized event identity:
+
+```text
+gcp_project_id: capital-index-2026
+project_id: capital_index
+source_registry_id: drive_event_test
+```
+
+Do not use the GCP project id as the business `project_id`.
+
 ## Manual test events
 
 Create the following files inside the test folder:
@@ -78,6 +113,16 @@ Drive API changes.watch + changes.list
 ```
 
 as the primary ingestion path.
+
+For Phase 0.1, use Drive API `changes.getStartPageToken` and `changes.list`
+polling/reconciliation as the working ingestion path. Revisit Workspace Events API
+only after its auth/app ownership requirements are verified.
+
+Production page token state must move to Firestore:
+
+```text
+/system_state/drive_changes/{source_registry_id}
+```
 
 ## Output artifacts
 

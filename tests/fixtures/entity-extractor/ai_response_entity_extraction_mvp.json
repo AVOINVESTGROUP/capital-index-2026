@@ -1,0 +1,47 @@
+{
+  "entities": [
+    {
+      "type": "PROJECT",
+      "name": "Capital Index",
+      "confidence": 0.94,
+      "evidence_text": "Active project source text.",
+      "attributes": {
+        "source": "fixture"
+      }
+    },
+    {
+      "type": "COMPANY",
+      "name": "Integra Motors",
+      "confidence": 0.88,
+      "evidence_text": "Integra Motors appears in the approved source.",
+      "attributes": {}
+    },
+    {
+      "type": "TASK",
+      "name": "Weak task",
+      "confidence": 0.2,
+      "evidence_text": "Low confidence example.",
+      "attributes": {}
+    }
+  ],
+  "relationships": [
+    {
+      "relationship_type": "project_mentions_company",
+      "from_id": "Capital Index",
+      "to_id": "Integra Motors",
+      "confidence": 0.86,
+      "evidence_file_ids": ["file_active_001"],
+      "evidence_artifact_ids": ["entity_candidate_fixture"],
+      "reason": "The approved source links the project context to the company."
+    },
+    {
+      "relationship_type": "weak_relationship",
+      "from_id": "Capital Index",
+      "to_id": "Unknown",
+      "confidence": 0.4,
+      "evidence_file_ids": ["file_active_001"],
+      "evidence_artifact_ids": ["entity_candidate_fixture"],
+      "reason": "Low confidence example."
+    }
+  ]
+}

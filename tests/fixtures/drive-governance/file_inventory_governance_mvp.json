@@ -1,0 +1,122 @@
+{
+  "schema_version": "capital.drive_governance_fixture.v1",
+  "fixture_id": "governance_mvp_20260527",
+  "description": "Synthetic Drive file inventory for Drive Governance MVP: empty, duplicate-name, stale/version and unknown-project candidates.",
+  "generated_at": "2026-05-27T00:00:00Z",
+  "files": [
+    {
+      "file_id": "file_empty_doc_001",
+      "name": "drive-probe-test-001",
+      "mime_type": "application/vnd.google-apps.document",
+      "parents": ["folder_capital_event_test"],
+      "trashed": false,
+      "modified_time": "2026-05-26T10:56:32Z",
+      "created_time": "2026-05-26T10:55:00Z",
+      "size": null,
+      "web_view_link": "https://docs.google.com/document/d/file_empty_doc_001/edit",
+      "gcp_project_id": "capital-index-2026",
+      "project_id": "capital_index",
+      "source_registry_id": "drive_event_test",
+      "text_stats": {
+        "char_count": 1,
+        "non_whitespace_char_count": 0,
+        "text_hash": null
+      }
+    },
+    {
+      "file_id": "file_offer_current_001",
+      "name": "Integra Motors commercial offer final.pdf",
+      "mime_type": "application/pdf",
+      "parents": ["folder_integra_motors_sales"],
+      "trashed": false,
+      "modified_time": "2026-05-20T09:00:00Z",
+      "created_time": "2026-05-20T08:30:00Z",
+      "size": 842112,
+      "web_view_link": "https://drive.google.com/file/d/file_offer_current_001/view",
+      "gcp_project_id": "capital-index-2026",
+      "project_id": "integra_motors",
+      "source_registry_id": "integra_motors_sales",
+      "text_stats": {
+        "char_count": 18420,
+        "non_whitespace_char_count": 15100,
+        "text_hash": "hash_offer_final_20260520"
+      }
+    },
+    {
+      "file_id": "file_offer_copy_001",
+      "name": "Integra Motors commercial offer final copy.pdf",
+      "mime_type": "application/pdf",
+      "parents": ["folder_integra_motors_sales"],
+      "trashed": false,
+      "modified_time": "2026-05-20T09:04:00Z",
+      "created_time": "2026-05-20T09:04:00Z",
+      "size": 842112,
+      "web_view_link": "https://drive.google.com/file/d/file_offer_copy_001/view",
+      "gcp_project_id": "capital-index-2026",
+      "project_id": "integra_motors",
+      "source_registry_id": "integra_motors_sales",
+      "text_stats": {
+        "char_count": 18420,
+        "non_whitespace_char_count": 15100,
+        "text_hash": "hash_offer_final_20260520"
+      }
+    },
+    {
+      "file_id": "file_contract_v1_001",
+      "name": "Kvartal lease agreement v1 draft.docx",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "parents": ["folder_kvartal_contracts"],
+      "trashed": false,
+      "modified_time": "2025-10-01T12:00:00Z",
+      "created_time": "2025-09-28T12:00:00Z",
+      "size": 124112,
+      "web_view_link": "https://drive.google.com/file/d/file_contract_v1_001/view",
+      "gcp_project_id": "capital-index-2026",
+      "project_id": "kvartal",
+      "source_registry_id": "kvartal_contracts",
+      "text_stats": {
+        "char_count": 34120,
+        "non_whitespace_char_count": 28700,
+        "text_hash": "hash_kvartal_contract_v1"
+      }
+    },
+    {
+      "file_id": "file_contract_final_001",
+      "name": "Kvartal lease agreement signed final.docx",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "parents": ["folder_kvartal_contracts"],
+      "trashed": false,
+      "modified_time": "2026-05-15T15:30:00Z",
+      "created_time": "2026-05-15T15:00:00Z",
+      "size": 132880,
+      "web_view_link": "https://drive.google.com/file/d/file_contract_final_001/view",
+      "gcp_project_id": "capital-index-2026",
+      "project_id": "kvartal",
+      "source_registry_id": "kvartal_contracts",
+      "text_stats": {
+        "char_count": 35240,
+        "non_whitespace_char_count": 29610,
+        "text_hash": "hash_kvartal_contract_final"
+      }
+    },
+    {
+      "file_id": "file_unknown_project_001",
+      "name": "IMG_2024_untitled_scan.pdf",
+      "mime_type": "application/pdf",
+      "parents": ["folder_unmapped_uploads"],
+      "trashed": false,
+      "modified_time": "2024-11-10T10:00:00Z",
+      "created_time": "2024-11-10T10:00:00Z",
+      "size": 4412200,
+      "web_view_link": "https://drive.google.com/file/d/file_unknown_project_001/view",
+      "gcp_project_id": "capital-index-2026",
+      "project_id": null,
+      "source_registry_id": null,
+      "text_stats": {
+        "char_count": null,
+        "non_whitespace_char_count": null,
+        "text_hash": null
+      }
+    }
+  ]
+}

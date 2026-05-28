@@ -1,0 +1,18 @@
+{
+  "file_active_001": {
+    "file_id": "file_active_001",
+    "project_id": "capital_index",
+    "source_registry_id": "drive_event_test",
+    "source_status": "active",
+    "index_eligible": true,
+    "human_block": false
+  },
+  "file_duplicate_001": {
+    "file_id": "file_duplicate_001",
+    "project_id": "capital_index",
+    "source_registry_id": "drive_event_test",
+    "source_status": "candidate_duplicate",
+    "index_eligible": false,
+    "human_block": false
+  }
+}
