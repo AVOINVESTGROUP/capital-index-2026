@@ -24,6 +24,7 @@ type FirestoreDocument = {
 
 type FirestoreListResponse = {
   documents?: FirestoreDocument[];
+  nextPageToken?: string;
 };
 
 const PROJECT_ID = process.env.GCP_PROJECT_ID || "capital-index-2026";
@@ -189,18 +190,26 @@ function nextSourceQuality(action: SourceFileAction): {
 
 async function listCollection(collection: string): Promise<FirestoreDocument[]> {
   const token = await accessToken();
-  const response = await fetch(`${baseUrl()}/${collection}?pageSize=300`, {
-    headers: authHeaders(token),
-    cache: "no-store",
-  });
-  if (response.status === 404) {
-    return [];
-  }
-  if (!response.ok) {
-    throw new Error(`Firestore list failed: ${response.status} ${await response.text()}`);
-  }
-  const data = (await response.json()) as FirestoreListResponse;
-  return data.documents || [];
+  const documents: FirestoreDocument[] = [];
+  let pageToken = "";
+  do {
+    const params = new URLSearchParams({ pageSize: "1000" });
+    if (pageToken) params.set("pageToken", pageToken);
+    const response = await fetch(`${baseUrl()}/${collection}?${params.toString()}`, {
+      headers: authHeaders(token),
+      cache: "no-store",
+    });
+    if (response.status === 404) {
+      return documents;
+    }
+    if (!response.ok) {
+      throw new Error(`Firestore list failed: ${response.status} ${await response.text()}`);
+    }
+    const data = (await response.json()) as FirestoreListResponse;
+    documents.push(...(data.documents || []));
+    pageToken = data.nextPageToken || "";
+  } while (pageToken);
+  return documents;
 }
 
 async function getDocument(collection: string, id: string): Promise<FirestoreDocument | null> {

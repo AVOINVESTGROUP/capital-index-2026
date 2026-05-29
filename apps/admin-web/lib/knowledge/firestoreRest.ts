@@ -21,6 +21,7 @@ type FirestoreDocument = {
 
 type FirestoreListResponse = {
   documents?: FirestoreDocument[];
+  nextPageToken?: string;
 };
 
 const PROJECT_ID = process.env.GCP_PROJECT_ID || "capital-index-2026";
@@ -33,7 +34,7 @@ export async function listKnowledgeItems(limit: number): Promise<KnowledgeItem[]
   const [extractedDocs, extractionDocs, fileDocs] = await Promise.all([
     listCollection("extracted_text", Math.max(limit, 100)),
     listCollection("entity_extractions", Math.max(limit, 100)),
-    listCollection("files", 300),
+    listCollection("files", 10_000),
   ]);
   const filesById = new Map(fileDocs.map((doc) => [doc.name.split("/").pop() || "", doc]));
   const extractionsByFileId = new Map<string, FirestoreDocument>();
@@ -52,7 +53,7 @@ export async function listKnowledgeItems(limit: number): Promise<KnowledgeItem[]
 
 export async function getProgressSummary(): Promise<ProgressSummary> {
   const [fileDocs, extractedDocs, extractionDocs, cleanupDocs, reviewDocs] = await Promise.all([
-    listCollection("files", 1000),
+    listCollection("files", 10_000),
     listCollection("extracted_text", 1000),
     listCollection("entity_extractions", 1000),
     listCollection("cleanup_queue", 1000),
@@ -130,18 +131,26 @@ function relationshipFromValue(value: FirestoreValue): KnowledgeRelationship {
 
 async function listCollection(collection: string, pageSize: number): Promise<FirestoreDocument[]> {
   const token = await accessToken();
-  const response = await fetch(`${baseUrl()}/${collection}?pageSize=${pageSize}`, {
-    headers: { authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (response.status === 404) {
-    return [];
-  }
-  if (!response.ok) {
-    throw new Error(`Firestore list failed: ${response.status} ${await response.text()}`);
-  }
-  const data = (await response.json()) as FirestoreListResponse;
-  return data.documents || [];
+  const documents: FirestoreDocument[] = [];
+  let pageToken = "";
+  do {
+    const params = new URLSearchParams({ pageSize: String(Math.min(pageSize, 1000)) });
+    if (pageToken) params.set("pageToken", pageToken);
+    const response = await fetch(`${baseUrl()}/${collection}?${params.toString()}`, {
+      headers: { authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (response.status === 404) {
+      return documents;
+    }
+    if (!response.ok) {
+      throw new Error(`Firestore list failed: ${response.status} ${await response.text()}`);
+    }
+    const data = (await response.json()) as FirestoreListResponse;
+    documents.push(...(data.documents || []));
+    pageToken = data.nextPageToken || "";
+  } while (pageToken && documents.length < pageSize);
+  return documents.slice(0, pageSize);
 }
 
 function baseUrl(): string {

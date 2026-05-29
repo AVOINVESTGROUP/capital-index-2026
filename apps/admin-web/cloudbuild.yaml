@@ -5,7 +5,7 @@ steps:
       - -f
       - apps/admin-web/Dockerfile
       - -t
-      - europe-west4-docker.pkg.dev/capital-index-2026/firebaseapphosting-images/capital-admin-web-run:progress-dashboard-20260528
+      - ${_IMAGE}
       - .
 images:
-  - europe-west4-docker.pkg.dev/capital-index-2026/firebaseapphosting-images/capital-admin-web-run:progress-dashboard-20260528
+  - ${_IMAGE}
