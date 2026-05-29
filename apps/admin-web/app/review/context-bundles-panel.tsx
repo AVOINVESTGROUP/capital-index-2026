@@ -186,6 +186,69 @@ export default function ContextBundlesPanel({ user }: { user: User }) {
               </div>
 
               <section className={styles.knowledgeBlock}>
+                <p className={styles.eyebrow}>AI reading</p>
+                {!selected.aiReading || selected.aiReading.status !== "generated" ? (
+                  <div className={styles.emptyInline}>
+                    AI reading: {selected.aiReading?.status || "not_generated"}
+                    {selected.aiReading?.reason ? ` (${selected.aiReading.reason})` : ""}
+                  </div>
+                ) : (
+                  <>
+                    <article className={styles.auditItem}>
+                      <div>
+                        <strong>Что AI поняла</strong>
+                        <span>{selected.aiReading.executiveSummary || "-"}</span>
+                      </div>
+                      <small>
+                        {selected.aiReading.providerId} / {selected.aiReading.modelId} / confidence{" "}
+                        {formatConfidence(selected.aiReading.confidence)}
+                      </small>
+                    </article>
+
+                    {selected.aiReading.whatAiLearned.slice(0, 8).map((item, index) => (
+                      <article className={styles.auditItem} key={`learned-${index}`}>
+                        <div>
+                          <strong>Learned</strong>
+                          <span>{item.point}</span>
+                        </div>
+                        <small>evidence {item.sourceEvidenceIds.length}</small>
+                      </article>
+                    ))}
+
+                    {selected.aiReading.keyThemes.slice(0, 8).map((item, index) => (
+                      <article className={styles.auditItem} key={`theme-${index}`}>
+                        <div>
+                          <strong>{item.theme}</strong>
+                          <span>{item.whyItMatters}</span>
+                        </div>
+                        <small>evidence {item.sourceEvidenceIds.length}</small>
+                      </article>
+                    ))}
+
+                    {selected.aiReading.risks.slice(0, 8).map((item, index) => (
+                      <article className={styles.auditItem} key={`risk-${index}`}>
+                        <div>
+                          <strong>Risk: {item.severity || "unknown"}</strong>
+                          <span>{item.risk}</span>
+                        </div>
+                        <small>evidence {item.sourceEvidenceIds.length}</small>
+                      </article>
+                    ))}
+
+                    {selected.aiReading.recommendedNextActions.slice(0, 8).map((item, index) => (
+                      <article className={styles.auditItem} key={`next-${index}`}>
+                        <div>
+                          <strong>{item.action}</strong>
+                          <span>{item.reason}</span>
+                        </div>
+                        <small>evidence {item.sourceEvidenceIds.length}</small>
+                      </article>
+                    ))}
+                  </>
+                )}
+              </section>
+
+              <section className={styles.knowledgeBlock}>
                 <p className={styles.eyebrow}>High confidence claims</p>
                 {selected.recentClaims.length === 0 ? (
                   <div className={styles.emptyInline}>No claims in this bundle.</div>

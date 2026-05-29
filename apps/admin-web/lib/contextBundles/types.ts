@@ -20,6 +20,38 @@ export type ContextBundle = {
   maxBundleBytes: number;
   sourceFileIds: string[];
   omittedCount: number;
+  aiReading?: {
+    status: string;
+    reason: string;
+    providerId: string;
+    modelId: string;
+    executiveSummary: string;
+    confidence: number;
+    sourceEvidenceIds: string[];
+    whatAiLearned: Array<{
+      point: string;
+      sourceEvidenceIds: string[];
+    }>;
+    keyThemes: Array<{
+      theme: string;
+      whyItMatters: string;
+      sourceEvidenceIds: string[];
+    }>;
+    risks: Array<{
+      risk: string;
+      severity: string;
+      sourceEvidenceIds: string[];
+    }>;
+    openQuestions: Array<{
+      question: string;
+      sourceEvidenceIds: string[];
+    }>;
+    recommendedNextActions: Array<{
+      action: string;
+      reason: string;
+      sourceEvidenceIds: string[];
+    }>;
+  };
   recentClaims: Array<{
     claimId: string;
     claimType: string;

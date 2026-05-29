@@ -8,6 +8,12 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 
+from context_publisher.ai_reading import (
+    ai_reading_enabled_from_env,
+    build_bundle_reading,
+    disabled_bundle_reading,
+    failed_bundle_reading,
+)
 from context_publisher.builder import build_second_brain_publication
 from context_publisher.firestore_writer import (
     firestore_client,
@@ -86,6 +92,16 @@ def run_publish(payload: dict[str, Any]) -> dict[str, Any]:
         max_bundle_bytes=max_bundle_bytes,
         created_by="context-publisher",
     )
+    reading_requested = payload.get("ai_reading") is True or ai_reading_enabled_from_env()
+    if reading_requested:
+        try:
+            publication["ai_reading"] = build_bundle_reading(publication)
+        except Exception as exc:
+            print(f"ai_bundle_reading_failed: {type(exc).__name__}: {exc}")
+            publication["ai_reading"] = failed_bundle_reading(exc)
+    else:
+        publication["ai_reading"] = disabled_bundle_reading()
+    publication["bundle"]["ai_reading"] = publication["ai_reading"]
     write_enabled = _request_write_enabled(payload)
     write = write_context_publication(
         publication,
@@ -106,6 +122,11 @@ def run_publish(payload: dict[str, Any]) -> dict[str, Any]:
             "actual_bundle_bytes": publication["bundle"]["actual_bundle_bytes"],
         },
         "counts": publication["counts"],
+        "ai_reading": {
+            "status": publication["ai_reading"].get("status"),
+            "provider_id": publication["ai_reading"].get("provider_id"),
+            "model_id": publication["ai_reading"].get("model_id"),
+        },
         "write": write,
     }
 

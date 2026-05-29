@@ -18,12 +18,15 @@ class AppTest(unittest.TestCase):
     def setUp(self):
         self.original_write_enabled = os.environ.get("WRITE_ENABLED")
         self.original_request_write_enabled = os.environ.get("REQUEST_WRITE_ENABLED")
+        self.original_ai_reading_enabled = os.environ.get("AI_READING_ENABLED")
         os.environ["WRITE_ENABLED"] = "false"
         os.environ["REQUEST_WRITE_ENABLED"] = "false"
+        os.environ["AI_READING_ENABLED"] = "false"
 
     def tearDown(self):
         _restore_env("WRITE_ENABLED", self.original_write_enabled)
         _restore_env("REQUEST_WRITE_ENABLED", self.original_request_write_enabled)
+        _restore_env("AI_READING_ENABLED", self.original_ai_reading_enabled)
 
     def test_run_publish_dry_run(self):
         fake_client = FakeClient()
@@ -35,6 +38,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(result["write"]["status"], "disabled")
         self.assertEqual(result["bundle"]["approval_status"], "draft")
         self.assertEqual(result["counts"]["source_files"], 1)
+        self.assertEqual(result["ai_reading"]["status"], "not_generated")
         self.assertEqual(fake_client.store, {})
 
     def test_run_publish_can_write_only_when_request_gate_allows_it(self):
@@ -46,6 +50,7 @@ class AppTest(unittest.TestCase):
         self.assertTrue(result["write_enabled"])
         self.assertEqual(result["write"]["status"], "written")
         self.assertIn(("context_bundles", "current"), fake_client.store)
+        self.assertEqual(fake_client.store[("context_bundles", "current")]["data"]["ai_reading"]["status"], "not_generated")
 
 
 def _restore_env(name, value):

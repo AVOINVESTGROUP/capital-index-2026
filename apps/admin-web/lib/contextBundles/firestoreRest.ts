@@ -131,6 +131,7 @@ function contextBundleFromDocument(
   const fields = doc.fields || {};
   const bundleId = readString(fields.bundle_id) || doc.name.split("/").pop() || "";
   const body = readMap(fields.body);
+  const aiReading = readAiReading(fields.ai_reading);
   const projectionFields = projectionsByBundleId.get(bundleId)?.fields || {};
   const recentClaims = readArray(body.recent_claims).map(claimFromValue);
   const relationships = readArray(body.relationship_graph).map(relationshipFromValue);
@@ -158,6 +159,7 @@ function contextBundleFromDocument(
     maxBundleBytes: readNumber(fields.max_bundle_bytes),
     sourceFileIds,
     omittedCount: readArray(fields.omitted_or_blocked_sources).length,
+    aiReading,
     recentClaims,
     relationships,
     vaultProjection: projectionFields.projection_id
@@ -170,6 +172,60 @@ function contextBundleFromDocument(
           requiresApproval: readBoolean(projectionFields.requires_approval),
         }
       : undefined,
+  };
+}
+
+function readAiReading(value: FirestoreValue | undefined): ContextBundle["aiReading"] {
+  const fields = readMap(value);
+  if (!Object.keys(fields).length) {
+    return undefined;
+  }
+  return {
+    status: readString(fields.status),
+    reason: readString(fields.reason),
+    providerId: readString(fields.provider_id),
+    modelId: readString(fields.model_id),
+    executiveSummary: readString(fields.executive_summary),
+    confidence: readNumber(fields.confidence),
+    sourceEvidenceIds: readArray(fields.source_evidence_ids).map(readString).filter(Boolean),
+    whatAiLearned: readArray(fields.what_ai_learned).map((item) => {
+      const itemFields = readMap(item);
+      return {
+        point: readString(itemFields.point),
+        sourceEvidenceIds: readArray(itemFields.source_evidence_ids).map(readString).filter(Boolean),
+      };
+    }),
+    keyThemes: readArray(fields.key_themes).map((item) => {
+      const itemFields = readMap(item);
+      return {
+        theme: readString(itemFields.theme),
+        whyItMatters: readString(itemFields.why_it_matters),
+        sourceEvidenceIds: readArray(itemFields.source_evidence_ids).map(readString).filter(Boolean),
+      };
+    }),
+    risks: readArray(fields.risks).map((item) => {
+      const itemFields = readMap(item);
+      return {
+        risk: readString(itemFields.risk),
+        severity: readString(itemFields.severity),
+        sourceEvidenceIds: readArray(itemFields.source_evidence_ids).map(readString).filter(Boolean),
+      };
+    }),
+    openQuestions: readArray(fields.open_questions).map((item) => {
+      const itemFields = readMap(item);
+      return {
+        question: readString(itemFields.question),
+        sourceEvidenceIds: readArray(itemFields.source_evidence_ids).map(readString).filter(Boolean),
+      };
+    }),
+    recommendedNextActions: readArray(fields.recommended_next_actions).map((item) => {
+      const itemFields = readMap(item);
+      return {
+        action: readString(itemFields.action),
+        reason: readString(itemFields.reason),
+        sourceEvidenceIds: readArray(itemFields.source_evidence_ids).map(readString).filter(Boolean),
+      };
+    }),
   };
 }
 

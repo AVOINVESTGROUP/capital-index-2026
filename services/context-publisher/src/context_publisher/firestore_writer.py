@@ -44,6 +44,7 @@ def write_context_publication(
                 "relationships": counts.get("relationships", 0),
                 "context_bundles": 2,
                 "vault_projections": 1,
+                "ai_reading": 1 if publication.get("ai_reading") else 0,
             },
             "bundle_id": bundle["bundle_id"],
         }
@@ -54,6 +55,15 @@ def write_context_publication(
     _write_items(client, "relationships", publication.get("relationships") or [], "relationship_id")
     client.collection("context_bundles").document(bundle["bundle_id"]).set(bundle, merge=True)
     client.collection("context_bundles").document("current").set(bundle, merge=True)
+    if publication.get("ai_reading"):
+        client.collection("context_bundle_readings").document(bundle["bundle_id"]).set(
+            {
+                **publication["ai_reading"],
+                "bundle_id": bundle["bundle_id"],
+                "created_at": bundle.get("created_at"),
+            },
+            merge=True,
+        )
     client.collection("vault_projections").document(projection["projection_id"]).set(projection, merge=True)
     client.collection("vault_projections").document("current_second_brain").set(projection, merge=True)
 
@@ -67,6 +77,7 @@ def write_context_publication(
             "entities": counts.get("entities", 0),
             "relationships": counts.get("relationships", 0),
             "context_bundles": 2,
+            "ai_reading": 1 if publication.get("ai_reading") else 0,
             "vault_projections": 2,
         },
     }

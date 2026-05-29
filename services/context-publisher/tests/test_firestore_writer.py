@@ -43,6 +43,7 @@ def publication():
         "claims": [{"claim_id": "claim_1"}],
         "entities": [{"entity_id": "entity_1"}],
         "relationships": [{"relationship_id": "relationship_1"}],
+        "ai_reading": {"status": "generated", "executive_summary": "Summary"},
         "counts": {
             "evidence": 1,
             "claims": 1,
@@ -73,6 +74,7 @@ class FirestoreWriterTest(unittest.TestCase):
         self.assertIn(("relationships", "relationship_1"), client.store)
         self.assertIn(("context_bundles", "bundle_1"), client.store)
         self.assertIn(("context_bundles", "current"), client.store)
+        self.assertIn(("context_bundle_readings", "bundle_1"), client.store)
         self.assertIn(("vault_projections", "projection_1"), client.store)
         self.assertIn(("vault_projections", "current_second_brain"), client.store)
         self.assertTrue(client.store[("claims", "claim_1")]["merge"])
