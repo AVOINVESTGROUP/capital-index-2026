@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.claim.v1",
+  "title": "CAPITAL INDEX Claim",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "claim_id",
+    "claim_type",
+    "text",
+    "confidence",
+    "review_status",
+    "source_file_ids",
+    "evidence_ids",
+    "created_by_agent",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "capital.claim.v1"},
+    "claim_id": {"type": "string", "minLength": 1},
+    "claim_type": {"type": "string", "minLength": 1},
+    "text": {"type": "string", "minLength": 1},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "review_status": {"enum": ["proposed", "approved", "rejected"]},
+    "source_file_ids": {"type": "array", "items": {"type": "string"}},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}},
+    "linked_entity_ids": {"type": "array", "items": {"type": "string"}},
+    "linked_relationship_ids": {"type": "array", "items": {"type": "string"}},
+    "created_by_agent": {"type": "string"},
+    "created_at": {"type": "string"}
+  },
+  "additionalProperties": true
+}

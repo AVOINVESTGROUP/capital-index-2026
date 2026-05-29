@@ -1493,4 +1493,43 @@ no artificial simplification of architecture
 
 ## 12. One-line continuation prompt
 
-Continue CAPITAL INDEX from HANDOFF.md. Drive Changes fallback, event-ingestor, metadata-loader, policy-engine, content-extractor, drive-governance, entity-extractor, and capital-drive-scanner Cloud Run workers are deployed. Controlled /events, /files, /policy_decisions, /extracted_text, /review_queue, /cleanup_queue, and /entity_extractions Firestore writes are verified. Admin-web `/review` with Firebase Auth, Review Queue, Cleanup Queue, Source Files, Knowledge, and progress dashboard is verified. capital-drive-scanner now runs as the production Drive -> Firestore inventory path: Scheduler `capital-drive-scanner-daily` posts `{"write":true,"scan_mode":"all_drive","max_files":3000}`, Cloud Run revision `capital-drive-scanner-00004-j4r`, image `drive-scanner:all-drive-fast-20260529`, broad scan metadata-only, `DRIVE_REFETCH_ENABLED=false`, manual Scheduler run returned HTTP 200 in about 115s. Metadata refresh preserves existing `source_status`, `index_eligible`, and `human_block`. Drive Governance is required before broad AI/entity extraction: only `source_status=active`, `index_eligible=true`, `human_block=false` may enter content extraction, entity extraction, graph, embeddings, or AI context. AI may write proposal fields only; policy, review orchestrator, or human approval writes authoritative decisions. Workers remain guarded when idle: Drive mutation is forbidden, hard delete is forbidden, and restricted context publication requires approval. Next step: persist Drive scanner scan state/page tokens in Firestore, expose scanner coverage/progress in Admin Web, then run governance over expanded `/files` inventory before promoting approved files into content/entity extraction and context bundles.
+Context-publisher service scaffold completed:
+
+```text
+service_path: services/context-publisher
+purpose: evidence-first second-brain context publication
+outputs: source_evidence, claims, entities, relationships, context_bundles, vault_projections
+default_write_mode: dry-run
+write_gate: WRITE_ENABLED=true or REQUEST_WRITE_ENABLED=true plus request.write=true
+bundle_status: draft
+human_approval_required: true
+tests: python -m unittest services/context-publisher/tests/test_builder.py services/context-publisher/tests/test_firestore_writer.py services/context-publisher/tests/test_app.py -v
+```
+
+Context-publisher Cloud Run deployed:
+
+```text
+service: capital-context-publisher
+region: europe-west1
+image: europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/context-publisher:second-brain-20260529
+revision: capital-context-publisher-00001-45x
+service_account: capital-context-publisher@capital-index-2026.iam.gserviceaccount.com
+WRITE_ENABLED: false
+REQUEST_WRITE_ENABLED: true
+CONTEXT_SOURCE_LIMIT: 10000
+MAX_BUNDLE_BYTES: 120000
+Cloud Run status: Ready
+startup_probe: passed
+manual_http_probe: blocked by private URL / missing local cloud-run-proxy component
+```
+
+Current context-publisher contract:
+
+```text
+Only source_status=active, index_eligible=true, human_block!=true, ai_context_allowed=true content can enter AI context bundles.
+The AI receives an evidence-first bundle, not a single Drive link.
+Each answerable memory object points back to evidence/source file IDs.
+Vault output is preview-only with protected generated blocks.
+```
+
+Continue CAPITAL INDEX from HANDOFF.md. Drive Changes fallback, event-ingestor, metadata-loader, policy-engine, content-extractor, drive-governance, entity-extractor, capital-drive-scanner, and context-publisher are implemented at service level. Controlled /events, /files, /policy_decisions, /extracted_text, /review_queue, /cleanup_queue, and /entity_extractions Firestore writes are verified. Admin-web `/review` with Firebase Auth, Review Queue, Cleanup Queue, Source Files, Knowledge, and progress dashboard is verified. capital-drive-scanner now runs as the production Drive -> Firestore inventory path: Scheduler `capital-drive-scanner-daily` posts `{"write":true,"scan_mode":"all_drive","max_files":3000}`, Cloud Run revision `capital-drive-scanner-00004-j4r`, image `drive-scanner:all-drive-fast-20260529`, broad scan metadata-only, `DRIVE_REFETCH_ENABLED=false`, manual Scheduler run returned HTTP 200 in about 115s. Metadata refresh preserves existing `source_status`, `index_eligible`, and `human_block`. Drive Governance is required before broad AI/entity extraction: only `source_status=active`, `index_eligible=true`, `human_block=false` may enter content extraction, entity extraction, graph, embeddings, or AI context. context-publisher builds evidence-first second-brain publications from approved Firestore state: source_evidence, claims, entities, relationships, context_bundle, and vault_projection. It is dry-run by default; context bundle writes are draft and require approval. AI may write proposal fields only; policy, review orchestrator, or human approval writes authoritative decisions. Workers remain guarded when idle: Drive mutation is forbidden, hard delete is forbidden, and restricted context publication requires approval. Next step: deploy context-publisher Cloud Run write-disabled, then add Admin Web preview/approve controls for context bundles before Vault/AI Gateway publication.

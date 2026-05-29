@@ -170,9 +170,13 @@
 
 ## Phase 4 — Projection
 
-- [ ] context-publisher
+- [x] context-publisher service scaffold
+- [x] context-publisher evidence-first bundle builder
+- [x] context-publisher Firestore write gate
+- [x] context-publisher schemas and unit tests
+- [ ] deploy context-publisher Cloud Run write-disabled
 - [ ] vault-writer
-- [ ] AI context bundles
+- [x] AI context bundle draft contract
 - [ ] owner profile context bundle
 - [ ] project context bundles
 - [ ] relationship graph bundle

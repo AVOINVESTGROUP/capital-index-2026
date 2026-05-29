@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.context_bundle.v1",
+  "title": "CAPITAL INDEX Context Bundle",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "bundle_type",
+    "created_at",
+    "created_by",
+    "approval_status",
+    "requires_human_approval",
+    "max_bundle_bytes",
+    "actual_bundle_bytes",
+    "source_file_ids",
+    "included_extracted_text_file_ids",
+    "body"
+  ],
+  "properties": {
+    "schema_version": {"const": "capital.context_bundle.v1"},
+    "bundle_id": {"type": "string", "minLength": 1},
+    "bundle_type": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string"},
+    "created_by": {"type": "string", "minLength": 1},
+    "policy_snapshot_id": {"type": ["string", "null"]},
+    "approval_status": {"enum": ["draft", "approved", "rejected", "superseded"]},
+    "requires_human_approval": {"const": true},
+    "approved_by": {"type": ["string", "null"]},
+    "approved_at": {"type": ["string", "null"]},
+    "max_bundle_bytes": {"type": "integer", "minimum": 1},
+    "actual_bundle_bytes": {"type": "integer", "minimum": 0},
+    "source_file_ids": {"type": "array", "items": {"type": "string"}},
+    "included_extracted_text_file_ids": {"type": "array", "items": {"type": "string"}},
+    "omitted_or_blocked_sources": {"type": "array"},
+    "body": {
+      "type": "object",
+      "required": [
+        "source_file_ids",
+        "claim_ids",
+        "entity_ids",
+        "relationship_ids",
+        "evidence_ids",
+        "recent_claims",
+        "relationship_graph"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

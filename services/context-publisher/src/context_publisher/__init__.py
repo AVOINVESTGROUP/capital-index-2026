@@ -1,0 +1,2 @@
+"""CAPITAL INDEX context publisher."""
+

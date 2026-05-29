@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.vault_projection.v1",
+  "title": "CAPITAL INDEX Vault Projection",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "projection_id",
+    "bundle_id",
+    "path",
+    "title",
+    "content",
+    "protected_blocks",
+    "manual_override_respected",
+    "write_status",
+    "requires_approval",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "capital.vault_projection.v1"},
+    "projection_id": {"type": "string", "minLength": 1},
+    "bundle_id": {"type": "string", "minLength": 1},
+    "path": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "content": {"type": "string"},
+    "protected_blocks": {"type": "array", "items": {"type": "string"}},
+    "manual_override_respected": {"const": true},
+    "write_status": {"enum": ["preview", "written", "blocked", "conflict"]},
+    "requires_approval": {"const": true},
+    "created_at": {"type": "string"}
+  },
+  "additionalProperties": true
+}

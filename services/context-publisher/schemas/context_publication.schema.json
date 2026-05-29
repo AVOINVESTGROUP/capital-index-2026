@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capital.context_publication.v1",
+  "title": "CAPITAL INDEX Context Publication",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "created_at",
+    "created_by",
+    "bundle",
+    "claims",
+    "source_evidence",
+    "entities",
+    "relationships",
+    "vault_projection",
+    "counts"
+  ],
+  "properties": {
+    "schema_version": {"const": "capital.context_publication.v1"},
+    "created_at": {"type": "string"},
+    "created_by": {"type": "string"},
+    "bundle": {"type": "object"},
+    "claims": {"type": "array"},
+    "source_evidence": {"type": "array"},
+    "entities": {"type": "array"},
+    "relationships": {"type": "array"},
+    "vault_projection": {"type": "object"},
+    "counts": {"type": "object"}
+  },
+  "additionalProperties": true
+}
