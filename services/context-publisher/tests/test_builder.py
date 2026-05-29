@@ -110,6 +110,18 @@ class ContextBuilderTest(unittest.TestCase):
         self.assertIn("CAPITAL_INDEX:GENERATED_START", projection["content"])
         self.assertIn("Manual Notes", projection["content"])
 
+    def test_entities_are_not_published_without_evidence(self):
+        source = sample_source()
+        source["extracted_text"][0]["ai_context_allowed"] = False
+
+        publication = build_second_brain_publication(source)
+
+        self.assertEqual(publication["counts"]["evidence"], 0)
+        self.assertEqual(publication["counts"]["entities"], 0)
+        self.assertEqual(publication["counts"]["relationships"], 0)
+        self.assertEqual(publication["counts"]["claims"], 0)
+        self.assertEqual(publication["bundle"]["body"]["recent_claims"], [])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -40,13 +40,13 @@ def build_second_brain_publication(
         for item in source.get("extracted_text", [])
         if item.get("file_id") in files_by_id and item.get("ai_context_allowed") is True
     }
+    evidence = _build_source_evidence(files_by_id, extracted_by_file_id)
+    evidence_file_ids = {item["file_id"] for item in evidence}
     entity_extractions = [
         item
         for item in source.get("entity_extractions", [])
-        if item.get("file_id") in files_by_id and item.get("status") == "extracted"
+        if item.get("file_id") in evidence_file_ids and item.get("status") == "extracted"
     ]
-
-    evidence = _build_source_evidence(files_by_id, extracted_by_file_id)
     entities = _build_entities(entity_extractions, evidence)
     relationships = _build_relationships(entity_extractions, evidence)
     claims = _build_claims(extracted_by_file_id, entity_extractions, evidence, entities, relationships)
