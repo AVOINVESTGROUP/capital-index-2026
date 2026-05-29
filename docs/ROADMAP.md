@@ -47,15 +47,38 @@
 - [x] Add Apps Script B1 Drive -> Files sync for missing file rows
 - [x] Add Apps Script B2 Cloud Run client without embedded secrets
 - [x] Add Cloud Run `/classify-sheet-row` endpoint backed by Secret Manager
-- [ ] Run B1 sync on live CAPITAL_INDEX_2026 Sheet
+- [x] Run B1 sync and B2 Cloud Run tagging on live CAPITAL_INDEX_2026 Sheet
 - [ ] Create Google Drive `Capital Index` label taxonomy
-- [ ] Import live Sheet + Drive Labels into Firestore `/files`
+- [ ] Keep Sheet as migration/operator aid, not production source of truth
+- [ ] Import legacy Sheet decisions into Firestore only as migration evidence
 - [ ] Map current Vault structure
 - [ ] Parse existing `00-overview.md` files
 - [ ] Define project registry
 - [ ] Define source registry
 - [ ] Define folder policies
 - [ ] Define first strict-domain folders
+
+## Phase 0.6 — Drive-to-Firestore primary index
+
+- [x] Deploy Cloud Run `capital-drive-scanner`
+- [x] Add Cloud Scheduler `capital-drive-scanner-daily`
+- [x] Verify controlled `/files` write from Drive scanner
+- [ ] Expand scanner beyond the initial single-root, 250-file MVP
+- [ ] Add all-accessible or multi-root Drive scan mode with explicit operator limits
+- [ ] Add scan state and page-token persistence in Firestore
+- [ ] Preserve manual source-quality overrides during scanner refresh
+- [ ] Add Drive Label read/write integration for source quality where available
+- [ ] Make Admin Source Files tab the authoritative correction surface
+- [ ] Add scanner health and coverage metrics to admin progress dashboard
+
+## Phase 0.7 — AI proposals before authority
+
+- [ ] Add Firestore-backed file AI classifier worker
+- [ ] Write AI output to proposal fields, not authoritative source fields
+- [ ] Add proposal confidence, evidence file IDs and model/provider audit fields
+- [ ] Route low-confidence or conflicting proposals to `/review_queue`
+- [ ] Let admin UI accept, correct or reject proposals with `/source_quality_actions`
+- [ ] Keep destructive actions and Drive mutations behind human approval
 
 ## Phase 1 — Event fabric
 
@@ -75,7 +98,8 @@
 - [x] metadata-loader preserves human source-quality decisions during metadata refresh
 - [x] Drive scanner/reconciler local controlled scan
 - [x] Controlled `/files` write for first Drive inventory batch
-- [ ] nightly reconciler
+- [x] Scheduled daily Drive scanner/reconciler
+- [ ] production-grade incremental reconciler with persisted state
 - [ ] audit events
 
 ## Phase 2 — Policy and classification
@@ -147,6 +171,12 @@
 - [ ] context-publisher
 - [ ] vault-writer
 - [ ] AI context bundles
+- [ ] owner profile context bundle
+- [ ] project context bundles
+- [ ] relationship graph bundle
+- [ ] recent changes bundle
+- [ ] evidence bundle with multiple Drive links per answer
+- [ ] admin preview/approve flow for context bundles
 
 ## Phase 5 — Review and operations
 

@@ -4,7 +4,7 @@ Date: 2026-05-28
 
 ## Status
 
-Accepted
+Superseded by ADR-0005.
 
 ## Context
 
@@ -13,17 +13,26 @@ and the related Google Sheet / Apps Script path. That index contains file metada
 project attribution, summaries, value scores, enrichment state, and operator-facing
 actions such as `KEEP`, `REVIEW`, and `DELETE`.
 
-The newer Drive scanner is useful for inventory and drift detection, but treating raw
-Drive inventory as the first knowledge source creates noise: old context snapshots,
-temporary files, duplicates, prompts, and low-value files can enter analysis before the
-operator has approved the source set.
+The newer Drive scanner is useful for inventory and drift detection. Treating raw
+Drive inventory as approved knowledge creates noise: old context snapshots,
+temporary files, duplicates, prompts, and low-value files can enter analysis before
+the operator has approved the source set.
+
+After validating the Admin Web governance surface and Cloud Run scanner, the
+project revised this decision. The Sheet-first migration path is still valuable,
+but it must not be the production source of truth or backend queue.
 
 ## Decision
 
-The legacy `CAPITAL_INDEX_2026` index is the primary curated source for the first
-production knowledge base migration.
+The legacy `CAPITAL_INDEX_2026` index is migration evidence and an operator aid.
+It is not the primary production inventory.
 
-Drive scanner remains secondary:
+Cloud Run Drive Scanner and Firestore `/files` are the primary production
+inventory path. The legacy Sheet may be imported into Firestore to seed or
+compare operator decisions, but Firestore remains authoritative for deployed
+workers and Admin Web.
+
+Drive scanner:
 
 - it discovers new or changed files;
 - it reconciles missing metadata;
@@ -45,9 +54,10 @@ itself grant new AI read approval. The source must still be `KEEP` or later appr
 
 ## Consequences
 
-- The system must import the legacy index before broad Drive analysis.
+- The system may import the legacy index before broad Drive analysis, but it must
+  not depend on the Sheet as the production database.
 - Admin UI counts should be based on imported `/files` source quality, not only on
-the current partial Drive scan.
+  the current partial Drive scan.
 - Content extraction and entity extraction must only read `active` and
 `index_eligible=true` files.
 - Cleanup suggestions can use the full Drive scanner, but deletion remains forbidden
@@ -55,6 +65,10 @@ without human approval and audit log.
 
 ## Next Implementation Step
 
-Create a legacy index importer that reads `CAPITAL_INDEX_2026 - Files (3).csv`,
-maps rows into `/files`, records source-quality audit actions, and runs in dry-run by
-default. Only `--write` updates Firestore.
+Implement ADR-0005:
+
+- expand Cloud Run Drive Scanner beyond the 250-file MVP;
+- persist scan state in Firestore;
+- write AI classifier output as proposals;
+- use Admin Web for human correction and approval;
+- keep Sheet import as optional migration evidence.

@@ -6,28 +6,43 @@ Date: 2026-05-28
 
 Use Google-native tools where they reduce custom code:
 
-- Google Sheet `CAPITAL_INDEX_2026` remains the operator dashboard and migration table.
+- Cloud Run Drive Scanner writes the primary file inventory into Firestore `/files`.
 - Google Drive Labels become the native file-level source quality layer.
-- Apps Script keeps the Sheet inventory current.
-- CAPITAL INDEX backend reads the curated Sheet/Labels before AI extraction.
+- Admin Web is the operator control surface for inspection, correction and approval.
+- Google Sheet `CAPITAL_INDEX_2026` remains a migration table and manual fallback, not
+  the production database.
+- Apps Script is allowed for migration, diagnostics and emergency manual sync only.
 
 The system must not analyze the whole Drive as an untrusted dump.
 
-## Correct Order
+## Production Order
 
 ```text
 Drive files
-  -> B1 Drive sync adds missing files to CAPITAL_INDEX_2026 / Files
-  -> Human / rules / Drive Labels classify files
-  -> B2 AI tagging enriches rows marked NEEDS_AI
-  -> Sheet + Labels are imported into Firestore /files
+  -> Cloud Run Drive Scanner upserts Firestore /files
+  -> Drive Governance assigns safe source-quality defaults
+  -> AI classifier writes proposals, summaries and confidence
+  -> Admin Web lets the operator approve, correct, block or route to review
   -> Policy Engine decides whether AI may read content
   -> Content extraction and entity extraction run only for approved files
+  -> Context Publisher builds AI context bundles and Obsidian projections
 ```
 
-## What Was Wrong
+## Legacy Sheet Path
 
-The B2 script only processes existing Sheet rows with:
+The Google Sheet and Apps Script path remains useful for:
+
+- migration from the current `CAPITAL_INDEX_2026` operator index;
+- manual diagnostics when a known Drive file appears missing;
+- emergency one-file syncs;
+- spreadsheet-based review by humans who prefer Sheet views;
+- comparing legacy decisions with Firestore source-quality state.
+
+It must not become the production backend queue.
+
+## What Was Wrong With The Sheet-First Path
+
+The B2 Apps Script only processes existing Sheet rows with:
 
 ```text
 enrichment_status = NEEDS_AI
@@ -38,7 +53,34 @@ It does not scan Drive and does not append new files.
 
 Therefore the row count in `Files` will not change when only B2 runs.
 
+The deeper architectural issue is that Sheet state is not visible to the deployed
+workers until imported into Firestore. Admin Web, content extraction, entity
+extraction, review queues, context bundles and Obsidian projections operate from
+Firestore, not from the Sheet.
+
+## Current Backend Baseline
+
+Cloud Run already contains the production indexing path:
+
+```text
+service: capital-drive-scanner
+region: europe-west1
+scheduler: capital-drive-scanner-daily
+current MVP limit: 250 files
+current MVP root: DRIVE_SCAN_ROOT_FOLDER_IDS
+target: expand to multi-root or all-accessible Drive scan with persisted state
+```
+
+The immediate production task is to expand this scanner safely and make Firestore
+`/files` the authoritative file inventory.
+
 ## B1 Drive Sync
+
+Status:
+
+```text
+legacy / migration / diagnostic path
+```
 
 Script file:
 
@@ -172,6 +214,46 @@ startAiTaggingViaCloudRun()
 
 Do not use the legacy direct-Gemini Apps Script `startAiTagging()` in production.
 It hardcoded or directly referenced API keys and violates `docs/SECRETS_POLICY.md`.
+
+## B2 Sheet Cloud Run Tagging
+
+Status:
+
+```text
+legacy / migration / diagnostic path
+```
+
+The Apps Script Cloud Run client is allowed as a temporary way to classify rows
+already present in the Sheet. It should not be the long-term AI classifier for the
+knowledge base. The production classifier should read Firestore `/files` and write
+AI proposal fields there.
+
+Production AI classifier writes proposal fields such as:
+
+```text
+ai_proposed_project_id
+ai_proposed_type
+ai_summary
+ai_value_score
+ai_action
+ai_confidence
+ai_provider_id
+ai_model_id
+ai_evidence_file_ids
+ai_proposed_at
+```
+
+Human or policy-approved decisions write authoritative fields such as:
+
+```text
+project_id
+type
+source_status
+index_eligible
+manual_override
+approved_by
+approved_at
+```
 
 Duplicate audit:
 

@@ -108,6 +108,21 @@ Google Sheets = human dashboard
 AI context files = compressed AI-facing projection
 ```
 
+### 3.2.1 Current inventory decision
+
+ADR-0005 is the current production decision for file inventory:
+
+```text
+Google Drive -> Cloud Run capital-drive-scanner -> Firestore /files
+```
+
+`CAPITAL_INDEX_2026` Sheet and Apps Script remain useful for migration,
+diagnostics, emergency manual syncs and operator views. They are not the
+production database and not the backend queue.
+
+AI classifiers write proposals. Policy Engine, Review Orchestrator or Human
+Approval writes authoritative decisions.
+
 ### 3.3 Source quality gate
 
 Google Drive is not treated as a clean source of truth by default.
@@ -209,7 +224,16 @@ AI как источник истины
 
 ### 5.1 Drive ingestion
 
-Primary:
+Current primary production path:
+
+```text
+capital-drive-scanner
+-> Firestore /files/{file_id}
+-> Drive Governance source-quality defaults
+-> Admin Web Source Files control
+```
+
+Future event primary:
 
 ```text
 Workspace Events API Drive subscriptions → Cloud Pub/Sub
@@ -310,6 +334,17 @@ client communication signals
 ```
 
 ### 5.5 Sheets ingestion
+
+Current status:
+
+```text
+Sheets ingestion is a migration/operator aid.
+It is not the primary Drive inventory path.
+It is not the production backend queue.
+```
+
+`CAPITAL_INDEX_2026` Sheet may seed or compare operator decisions, but deployed
+workers consume Firestore state.
 
 Apps Script onChange не является единственным источником истины.
 
@@ -1214,6 +1249,18 @@ Core collections:
   "classification_source": "drive_label|folder_policy|ai|manual",
   "classification_confidence": 0.0,
 
+  "ai_proposed_project_id": "string|null",
+  "ai_proposed_type": "string|null",
+  "ai_summary": "string|null",
+  "ai_value_score": 0,
+  "ai_action": "KEEP|REVIEW|DELETE|null",
+  "ai_sensitivity": "string|null",
+  "ai_confidence": 0.0,
+  "ai_evidence_file_ids": ["string"],
+  "ai_provider_id": "string|null",
+  "ai_model_id": "string|null",
+  "ai_proposed_at": "timestamp|null",
+
   "source_status": "active|candidate_duplicate|candidate_stale|candidate_empty|candidate_archive|do_not_index|needs_human_review",
   "index_eligible": true,
   "governance_status": "pending|evaluated|review_required|blocked",
@@ -1233,9 +1280,15 @@ Core collections:
 
   "created_by_system": false,
   "manual_override": false,
+  "approved_by": "string|null",
+  "approved_at": "timestamp|null",
   "processing_version": 1
 }
 ```
+
+AI proposal fields are not authoritative. The source-quality fields that allow
+content extraction (`source_status`, `index_eligible`, `human_block`) are written
+by policy-approved automation or human/admin actions.
 
 ### 18.2 `/file_revisions/{revision_key}`
 
@@ -2136,6 +2189,10 @@ AI context files остаются, но становятся не привяза
 Context bundles:
 
 ```text
+owner_profile
+project_context
+evidence_bundle
+risk_bundle
 executive_context
 project_index
 relationship_graph
@@ -2146,6 +2203,22 @@ cost_and_errors
 security_limited_context
 agent_task_context
 ```
+
+AI Gateway must not load the whole Drive into model context. It assembles bundles
+from approved Firestore state, extracted text, facts, entities, relationships and
+review queues. Evidence bundles must support multiple source files per answer:
+
+```text
+source_file_ids
+drive_urls
+extracted_facts
+relationship_ids
+confidence
+omitted_or_blocked_sources
+```
+
+Drive links are evidence and drill-down targets. The main reasoning context comes
+from approved extracted content and graph state, not from a single Drive URL.
 
 Каждый bundle имеет:
 
@@ -2168,7 +2241,12 @@ agent_task_context
   ],
   "source_projection_files": [
     "AI_EXECUTIVE_CONTEXT.md"
-  ]
+  ],
+  "included_source_file_ids": ["string"],
+  "evidence_drive_urls": ["string"],
+  "requires_human_approval": false,
+  "approved_by": "string|null",
+  "approved_at": "timestamp|null"
 }
 ```
 
@@ -2389,6 +2467,11 @@ If limit exceeded:
 ## 30. Sheets dashboard
 
 `CAPITAL_INDEX_2026` remains a human dashboard.
+
+It is not the production source of truth for file inventory. Firestore `/files`
+populated by `capital-drive-scanner` is the production inventory. The Sheet may
+be used for migration, diagnostics, manual review exports and operator-friendly
+views.
 
 Tabs:
 
@@ -2655,20 +2738,28 @@ Example:
 
 Phase 0.5 — Migration and baseline import.
 
+Migration imports legacy decisions as evidence. It does not make the Sheet the
+production database.
+
 Steps:
 
 ```text
-1. Export current CAPITAL_INDEX_2026 Sheet.
-2. Map rows to /files, /source_registry, /projects.
-3. Import AI_Bridge_Log_Spreadsheet into BigQuery event history.
-4. Parse existing Vault 00-overview.md files.
-5. Extract project summaries into /projects.
-6. Detect manual sections in Vault.
-7. Mark generated/manual boundaries.
-8. Archive AI_TODAY_CONTEXT and AI_WINDOW_CONTEXT.
-9. Preserve old context files as legacy snapshots.
-10. Validate counts before/after.
+1. Expand capital-drive-scanner as the primary /files inventory writer.
+2. Export current CAPITAL_INDEX_2026 Sheet for migration evidence.
+3. Map legacy decisions to /files proposal or audit fields.
+4. Import AI_Bridge_Log_Spreadsheet into BigQuery event history.
+5. Parse existing Vault 00-overview.md files.
+6. Extract project summaries into /projects.
+7. Detect manual sections in Vault.
+8. Mark generated/manual boundaries.
+9. Archive AI_TODAY_CONTEXT and AI_WINDOW_CONTEXT.
+10. Preserve old context files as legacy snapshots.
+11. Validate counts before/after.
 ```
+
+Legacy Sheet fields should be imported as migration evidence, proposal history or
+audit context. Current authoritative state must be written to Firestore by
+scanner, policy, review or human approval flows.
 
 Collections:
 
@@ -3094,8 +3185,9 @@ document final Drive ingestion mode
 ### Phase 0.5 — Migration
 
 ```text
-export current CAPITAL_INDEX_2026 Sheet
-import current metadata
+expand capital-drive-scanner as primary /files inventory writer
+export current CAPITAL_INDEX_2026 Sheet as migration evidence
+import legacy decisions as proposal/audit context
 import AI_Bridge_Log_Spreadsheet
 parse Vault project files
 archive old AI_TODAY_CONTEXT / AI_WINDOW_CONTEXT

@@ -18,6 +18,31 @@ Local path: C:\Dev\capital_orc
 Default branch: main
 ```
 
+Current architectural decision:
+
+```text
+Primary production inventory path:
+Google Drive -> Cloud Run capital-drive-scanner -> Firestore /files
+
+Legacy path:
+Apps Script + CAPITAL_INDEX_2026 Sheet is migration/operator aid only.
+
+AI authority:
+AI writes proposals. Policy Engine, Review Orchestrator or human approval writes
+authoritative decisions.
+```
+
+Current immediate implementation direction:
+
+```text
+1. Expand capital-drive-scanner beyond the single-root, 250-file MVP.
+2. Persist scan state/page tokens in Firestore.
+3. Add Firestore-backed AI classifier proposal fields.
+4. Use Admin Web as the correction/control surface.
+5. Build context bundles from approved Firestore state, extracted text, facts,
+   entities and relationships.
+```
+
 GCP project exists:
 
 ```text

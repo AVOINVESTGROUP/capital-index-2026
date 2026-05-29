@@ -28,7 +28,27 @@ Evidence before relationship creation.
 Projection before AI consumption.
 Audit for every AI call.
 No silent assumptions.
+AI proposes; policy or human approval decides.
 ```
+
+## AI proposal boundary
+
+AI agents may write proposals, drafts, classifications, summaries, relationship
+candidates and context bundle candidates.
+
+AI agents may not make authoritative source decisions by themselves:
+
+```text
+source_status = active
+index_eligible = true
+restricted read access
+Drive label mutation
+archive/move/delete
+context publication
+```
+
+Authoritative decisions require Policy Engine, Review Orchestrator or Human
+Approval and an audit record.
 
 ## Vault rules
 
@@ -67,6 +87,27 @@ AI_REVIEW_QUEUE.md: 30 KB
 ```
 
 If the limit is exceeded, keep blockers, risks, review items and active projects first. Paginate the rest.
+
+## Context bundle inputs
+
+AI Gateway should receive assembled bundles, not raw Drive dumps.
+
+Required bundle types:
+
+```text
+owner_profile
+project_context
+relationship_graph
+recent_changes
+evidence_bundle
+review_queue
+risk_bundle
+```
+
+Each answer-level evidence bundle should support multiple relevant Drive files,
+with source file IDs, Drive URLs, extracted facts and confidence. Drive links are
+evidence and drill-down targets; the main context should come from approved
+Firestore state, extracted text, facts, entities and relationships.
 
 ## AI roles
 

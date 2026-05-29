@@ -17,18 +17,19 @@ It is designed to:
 
 ## Current phase
 
-Repository and documentation foundation.
+Drive-to-Firestore production indexing, AI proposal generation, and operator
+governance control.
 
-## Initial implementation order
+## Implementation order
 
 1. Repository documentation and architecture baseline.
 2. GCP project `capital-index-2026`.
-3. Drive Events POC.
-4. Pub/Sub event fabric.
-5. Metadata ingestion.
-6. Policy engine.
-7. Registry import.
-8. Context publishing.
+3. Drive Events POC and Drive scanner fallback.
+4. Cloud Run Drive scanner writes the primary `/files` index in Firestore.
+5. AI workers write classification proposals, summaries, entities and relationships.
+6. Admin UI lets the operator approve, correct, block or route sources for review.
+7. Approved files enter full-text extraction and graph building.
+8. Context publisher creates safe AI context bundles and Obsidian projections.
 
 ## Repository layout
 
@@ -63,6 +64,7 @@ tests/
 - Obsidian Vault is projection only.
 - Sheets dashboard is not a database.
 - Apps Script is not backend queue.
+- AI proposals are not authoritative until accepted by policy or human approval.
 - AI is not source of truth.
 - No automatic deletion.
 - No AI access to `SECRET` or `DO_NOT_INDEX`.

@@ -90,6 +90,40 @@ Ignore recommendation
 Open in Drive
 ```
 
+The admin UI is also the correction surface for AI proposals. AI may propose
+project, type, value score, action, summary, sensitivity and relationship hints,
+but the operator or policy-approved automation owns the final source-quality
+decision.
+
+Authoritative source fields:
+
+```text
+project_id
+type
+source_status
+index_eligible
+human_block
+manual_override
+approved_by
+approved_at
+```
+
+AI proposal fields:
+
+```text
+ai_proposed_project_id
+ai_proposed_type
+ai_summary
+ai_value_score
+ai_action
+ai_sensitivity
+ai_confidence
+ai_evidence_file_ids
+ai_provider_id
+ai_model_id
+ai_proposed_at
+```
+
 Every decision must write:
 
 ```text
@@ -192,15 +226,59 @@ overriding manual human decision
 ## MVP Flow
 
 ```text
-1. metadata-loader writes /files/{file_id}
+1. drive-scanner writes /files/{file_id}
 2. drive-governance-worker reads /files and available extracted_text stats
-3. worker assigns source_status and index_eligible
-4. worker creates /cleanup_queue item when action is uncertain or destructive
-5. admin UI shows cleanup recommendation
-6. human decides
-7. cleanup action is written to /cleanup_actions
-8. only active/index_eligible files continue to AI extraction and graph
+3. worker assigns safe source_status and index_eligible defaults
+4. AI classifier writes proposals, not final authority
+5. worker creates /cleanup_queue or /review_queue item when uncertain or destructive
+6. admin UI shows source files, AI proposals and cleanup recommendations
+7. human accepts, corrects, blocks or routes to review
+8. source-quality action is written to /source_quality_actions or /cleanup_actions
+9. only active/index_eligible files continue to AI extraction and graph
 ```
+
+## Primary Index Path
+
+Production inventory path:
+
+```text
+Google Drive
+  -> capital-drive-scanner
+  -> Firestore /files
+  -> Admin Web Source Files
+```
+
+The legacy Sheet/Apps Script flow is retained for migration and diagnostics, but
+it is not the production backend queue.
+
+Scanner expansion tasks:
+
+```text
+expand beyond 250-file MVP
+support multi-root or all-accessible Drive scan mode
+persist scan state/page tokens in Firestore
+preserve manual overrides during metadata refresh
+surface scanner coverage in Admin Web
+```
+
+## Context Bundle Control
+
+Context bundles are generated projections, not source of truth.
+
+Before a bundle is published to AI Gateway or Obsidian, the system should support:
+
+```text
+preview bundle
+show included files and Drive links
+show extracted facts/entities/relationships
+show omitted or blocked files
+regenerate bundle
+pin or exclude context
+approve bundle for AI use
+```
+
+Evidence bundles must support multiple Drive source files. A single Drive link is
+not enough for project-level reasoning.
 
 ## First MVP Scope
 
