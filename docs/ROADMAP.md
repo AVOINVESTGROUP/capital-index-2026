@@ -63,8 +63,10 @@
 - [x] Deploy Cloud Run `capital-drive-scanner`
 - [x] Add Cloud Scheduler `capital-drive-scanner-daily`
 - [x] Verify controlled `/files` write from Drive scanner
-- [ ] Expand scanner beyond the initial single-root, 250-file MVP
-- [ ] Add all-accessible or multi-root Drive scan mode with explicit operator limits
+- [x] Expand scanner beyond the initial single-root, 250-file MVP
+- [x] Add all-accessible Drive scan mode with explicit operator limits
+- [x] Deploy `all_drive` scheduled scan with `max_files=3000`
+- [x] Keep broad-scan authoritative refetch disabled by default
 - [ ] Add scan state and page-token persistence in Firestore
 - [ ] Preserve manual source-quality overrides during scanner refresh
 - [ ] Add Drive Label read/write integration for source quality where available

@@ -254,12 +254,29 @@ it is not the production backend queue.
 Scanner expansion tasks:
 
 ```text
-expand beyond 250-file MVP
-support multi-root or all-accessible Drive scan mode
+done: support all-accessible Drive scan mode
+done: Scheduler body {"write":true,"scan_mode":"all_drive","max_files":3000}
+done: broad scan avoids per-file authoritative refetch by default
 persist scan state/page tokens in Firestore
 preserve manual overrides during metadata refresh
 surface scanner coverage in Admin Web
 ```
+
+Production scanner deployment:
+
+```text
+service: capital-drive-scanner
+region: europe-west1
+image: europe-west1-docker.pkg.dev/capital-index-2026/capital-workers/drive-scanner:all-drive-fast-20260529
+revision: capital-drive-scanner-00004-j4r
+schedule: capital-drive-scanner-daily, 7 3 * * *, Asia/Dubai
+attempt_deadline: 900s
+last_manual_scheduler_run: HTTP 200, about 115s
+```
+
+Broad scan reads Drive metadata only. It does not read file content and does not
+mutate Drive. It writes `/files` only when the Scheduler payload includes
+`write=true` and `REQUEST_WRITE_ENABLED=true` is set on the service.
 
 ## Context Bundle Control
 

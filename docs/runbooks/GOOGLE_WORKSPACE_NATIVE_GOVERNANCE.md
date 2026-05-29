@@ -66,10 +66,16 @@ Cloud Run already contains the production indexing path:
 service: capital-drive-scanner
 region: europe-west1
 scheduler: capital-drive-scanner-daily
-current MVP limit: 250 files
-current MVP root: DRIVE_SCAN_ROOT_FOLDER_IDS
-target: expand to multi-root or all-accessible Drive scan with persisted state
+current scheduler body: {"write":true,"scan_mode":"all_drive","max_files":3000}
+current scan mode: all accessible Drive metadata visible to delegated account
+current broad-scan refetch: DRIVE_REFETCH_ENABLED=false
+next target: persisted scan state/page tokens in Firestore
 ```
+
+The broad scan is metadata-only. It writes `/files` through the metadata-loader
+writer and preserves existing `source_status`, `index_eligible` and
+`human_block`. Deep authoritative refetch of permissions/labels is intentionally
+not enabled for the broad scan; it should run as a targeted follow-up job.
 
 The immediate production task is to expand this scanner safely and make Firestore
 `/files` the authoritative file inventory.
