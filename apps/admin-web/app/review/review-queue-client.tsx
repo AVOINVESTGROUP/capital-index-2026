@@ -17,6 +17,7 @@ import type {
   ReviewListResponse,
 } from "@/lib/reviewQueue/types";
 import CleanupQueuePanel from "./cleanup-queue-panel";
+import ContextBundlesPanel from "./context-bundles-panel";
 import KnowledgePanel from "./knowledge-panel";
 import ProgressDashboard from "./progress-dashboard";
 import styles from "./review.module.css";
@@ -64,8 +65,10 @@ const ACTION_COPY: Record<ReviewAction, { title: string; status: string; detail:
   },
 };
 
+type QueueMode = "review" | "cleanup" | "sources" | "knowledge" | "bundles";
+
 export default function ReviewQueueClient() {
-  const [queueMode, setQueueMode] = useState<"review" | "cleanup" | "sources" | "knowledge">("knowledge");
+  const [queueMode, setQueueMode] = useState<QueueMode>("knowledge");
   const [filter, setFilter] = useState("open");
   const [items, setItems] = useState<ReviewItem[]>([]);
   const [selectedId, setSelectedId] = useState<string>("");
@@ -283,6 +286,13 @@ export default function ReviewQueueClient() {
         >
           Knowledge
         </button>
+        <button
+          className={queueMode === "bundles" ? styles.modeTabActive : styles.modeTab}
+          onClick={() => setQueueMode("bundles")}
+          type="button"
+        >
+          Context Bundles
+        </button>
       </nav>
 
       <ProgressDashboard user={user} />
@@ -290,6 +300,7 @@ export default function ReviewQueueClient() {
       {queueMode === "cleanup" ? <CleanupQueuePanel user={user} /> : null}
       {queueMode === "sources" ? <SourceFilesPanel user={user} /> : null}
       {queueMode === "knowledge" ? <KnowledgePanel user={user} /> : null}
+      {queueMode === "bundles" ? <ContextBundlesPanel user={user} /> : null}
 
       {queueMode === "review" ? (
         <>
@@ -500,7 +511,7 @@ function formatDate(value: string) {
   }).format(date);
 }
 
-function titleForMode(mode: "review" | "cleanup" | "sources" | "knowledge") {
+function titleForMode(mode: QueueMode) {
   switch (mode) {
     case "cleanup":
       return "Cleanup Queue";
@@ -508,6 +519,8 @@ function titleForMode(mode: "review" | "cleanup" | "sources" | "knowledge") {
       return "Source Files";
     case "knowledge":
       return "Knowledge";
+    case "bundles":
+      return "Context Bundles";
     case "review":
     default:
       return "Review Queue";

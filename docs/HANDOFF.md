@@ -1523,6 +1523,20 @@ startup_probe: passed
 manual_http_probe: blocked by private URL / missing local cloud-run-proxy component
 ```
 
+Admin Web context bundle controls deployed:
+
+```text
+service: capital-admin-web-run
+region: europe-west4
+image: europe-west4-docker.pkg.dev/capital-index-2026/firebaseapphosting-images/capital-admin-web-run:context-bundles-20260529
+revision: capital-admin-web-run-00015-qvb
+live_route: https://capital-index-2026.web.app/review
+new_tab: Context Bundles
+api: /api/context-bundles
+api: /api/context-bundles/{bundleId}/action
+verified: /review returned HTTP 200; unauthenticated /api/context-bundles returned HTTP 401 as expected
+```
+
 Current context-publisher contract:
 
 ```text
