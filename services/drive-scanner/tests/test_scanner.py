@@ -8,7 +8,7 @@ from typing import Any
 SERVICE_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SERVICE_ROOT / "src"))
 
-from drive_scanner.scanner import inventory_to_normalized_events, scan_drive
+from drive_scanner.scanner import inventory_to_normalized_events, scan_all_drive_files, scan_drive
 
 
 class FakeExecute:
@@ -20,18 +20,34 @@ class FakeExecute:
 
 
 class FakeFiles:
-    def __init__(self, by_folder: dict[str, list[dict[str, Any]]]) -> None:
+    def __init__(
+        self,
+        by_folder: dict[str, list[dict[str, Any]]],
+        all_pages: list[dict[str, Any]] | None = None,
+    ) -> None:
         self.by_folder = by_folder
+        self.all_pages = all_pages or []
+        self.all_page_index = 0
 
     def list(self, **kwargs: Any) -> FakeExecute:
         query = kwargs["q"]
+        if query == "trashed=false":
+            if self.all_page_index >= len(self.all_pages):
+                return FakeExecute({"files": []})
+            response = self.all_pages[self.all_page_index]
+            self.all_page_index += 1
+            return FakeExecute(response)
         folder_id = query.split("'")[1]
         return FakeExecute({"files": self.by_folder.get(folder_id, [])})
 
 
 class FakeDriveService:
-    def __init__(self, by_folder: dict[str, list[dict[str, Any]]]) -> None:
-        self._files = FakeFiles(by_folder)
+    def __init__(
+        self,
+        by_folder: dict[str, list[dict[str, Any]]],
+        all_pages: list[dict[str, Any]] | None = None,
+    ) -> None:
+        self._files = FakeFiles(by_folder, all_pages)
 
     def files(self) -> FakeFiles:
         return self._files
@@ -66,6 +82,45 @@ class ScannerTest(unittest.TestCase):
         inventory = scan_drive(service, root_folder_ids=["root"], max_files=10)
 
         self.assertEqual(inventory["counts"]["folders_seen"], 2)
+        self.assertEqual([item["id"] for item in inventory["files"]], ["doc_1", "sheet_1"])
+
+    def test_scan_all_drive_files_pages_visible_inventory(self) -> None:
+        service = FakeDriveService(
+            {},
+            all_pages=[
+                {
+                    "files": [
+                        {
+                            "id": "folder_1",
+                            "name": "Folder",
+                            "mimeType": "application/vnd.google-apps.folder",
+                        },
+                        {
+                            "id": "doc_1",
+                            "name": "Doc",
+                            "mimeType": "application/vnd.google-apps.document",
+                        },
+                    ],
+                    "nextPageToken": "next",
+                },
+                {
+                    "files": [
+                        {
+                            "id": "sheet_1",
+                            "name": "Sheet",
+                            "mimeType": "application/vnd.google-apps.spreadsheet",
+                        }
+                    ],
+                    "incompleteSearch": True,
+                },
+            ],
+        )
+
+        inventory = scan_all_drive_files(service, max_files=10)
+
+        self.assertEqual(inventory["scan_mode"], "all_drive")
+        self.assertEqual(inventory["counts"]["pages_seen"], 2)
+        self.assertTrue(inventory["counts"]["incomplete_search"])
         self.assertEqual([item["id"] for item in inventory["files"]], ["doc_1", "sheet_1"])
 
     def test_inventory_becomes_normalized_events(self) -> None:

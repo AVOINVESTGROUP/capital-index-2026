@@ -20,6 +20,14 @@ class DriveScannerAppTest(unittest.TestCase):
         with patch.dict(os.environ, {"DRIVE_SCAN_ROOT_FOLDER_IDS": "a,b, c"}, clear=False):
             self.assertEqual(app._root_folder_ids({}), ["a", "b", "c"])
 
+    def test_scan_mode_accepts_root_and_all_drive_aliases(self) -> None:
+        self.assertEqual(app._scan_mode({}), "roots")
+        self.assertEqual(app._scan_mode({"scan_mode": "all_drive"}), "all_drive")
+        self.assertEqual(app._scan_mode({"scan_mode": "all-drives"}), "all_drive")
+        self.assertEqual(app._scan_mode({"scan_mode": "folders"}), "roots")
+        with self.assertRaises(ValueError):
+            app._scan_mode({"scan_mode": "bad"})
+
     def test_request_write_requires_gate_or_global_write(self) -> None:
         with patch.dict(os.environ, {"WRITE_ENABLED": "false", "REQUEST_WRITE_ENABLED": "false"}, clear=False):
             self.assertFalse(app._request_write_enabled({"write": True}))
@@ -28,6 +36,13 @@ class DriveScannerAppTest(unittest.TestCase):
             self.assertFalse(app._request_write_enabled({}))
         with patch.dict(os.environ, {"WRITE_ENABLED": "true", "REQUEST_WRITE_ENABLED": "false"}, clear=False):
             self.assertTrue(app._request_write_enabled({}))
+
+    def test_refetch_authoritative_requires_payload_or_env_flag(self) -> None:
+        with patch.dict(os.environ, {"DRIVE_REFETCH_ENABLED": "false"}, clear=False):
+            self.assertFalse(app._refetch_enabled({}))
+            self.assertTrue(app._refetch_enabled({"refetch_authoritative": True}))
+        with patch.dict(os.environ, {"DRIVE_REFETCH_ENABLED": "true"}, clear=False):
+            self.assertTrue(app._refetch_enabled({}))
 
     def test_bounded_int_clamps_values(self) -> None:
         self.assertEqual(app._bounded_int("10", 1, 100), 10)

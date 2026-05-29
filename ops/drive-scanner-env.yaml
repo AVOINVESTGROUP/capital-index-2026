@@ -1,0 +1,12 @@
+GCP_PROJECT_ID: capital-index-2026
+FIRESTORE_DATABASE: "(default)"
+BUSINESS_PROJECT_ID: capital_index
+SOURCE_REGISTRY_ID: drive_scan
+DRIVE_SCAN_ROOT_FOLDER_IDS: 1No6LMuCpH2T2jmGL7hnFlMto-0gnnHpq
+DRIVE_SUBJECT_EMAIL: office@integrayachtsuae.com
+DRIVE_SCAN_MODE: all_drive
+MAX_FILES: "3000"
+DRIVE_REFETCH_ENABLED: "false"
+WRITE_ENABLED: "false"
+REQUEST_WRITE_ENABLED: "true"
+WORKER_VERSION: drive-scanner-all-drive-20260529

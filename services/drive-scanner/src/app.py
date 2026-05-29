@@ -8,7 +8,7 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 
-from drive_scanner.scanner import inventory_to_normalized_events, scan_drive
+from drive_scanner.scanner import inventory_to_normalized_events, scan_all_drive_files, scan_drive
 from metadata_loader.drive_metadata import load_metadata_payload
 from metadata_loader.drive_refetch import refetch_authoritative_batch
 from metadata_loader.firestore_writer import firestore_client, write_metadata_batch
@@ -64,9 +64,10 @@ class DriveScannerHandler(BaseHTTPRequestHandler):
 
 
 def run_scan(payload: dict[str, Any]) -> dict[str, Any]:
+    scan_mode = _scan_mode(payload)
     root_folder_ids = _root_folder_ids(payload)
-    if not root_folder_ids:
-        raise ValueError("root_folder_ids is required")
+    if scan_mode == "roots" and not root_folder_ids:
+        raise ValueError("root_folder_ids is required when scan_mode=roots")
 
     project_id = os.environ.get("GCP_PROJECT_ID", "capital-index-2026")
     database = os.environ.get("FIRESTORE_DATABASE", "(default)")
@@ -74,15 +75,23 @@ def run_scan(payload: dict[str, Any]) -> dict[str, Any]:
     source_registry_id = payload.get("source_registry_id") or os.environ.get(
         "SOURCE_REGISTRY_ID", "drive_scan"
     )
-    max_files = _bounded_int(payload.get("max_files") or os.environ.get("MAX_FILES") or "250", 1, 1000)
+    max_files = _bounded_int(payload.get("max_files") or os.environ.get("MAX_FILES") or "250", 1, 10000)
 
     drive_service = build_drive_service()
-    inventory = scan_drive(
-        drive_service,
-        root_folder_ids=root_folder_ids,
-        max_files=max_files,
-        include_folders=payload.get("include_folders") is True,
-    )
+    include_folders = payload.get("include_folders") is True
+    if scan_mode == "all_drive":
+        inventory = scan_all_drive_files(
+            drive_service,
+            max_files=max_files,
+            include_folders=include_folders,
+        )
+    else:
+        inventory = scan_drive(
+            drive_service,
+            root_folder_ids=root_folder_ids,
+            max_files=max_files,
+            include_folders=include_folders,
+        )
     event_batch = inventory_to_normalized_events(
         inventory,
         gcp_project_id=project_id,
@@ -90,10 +99,11 @@ def run_scan(payload: dict[str, Any]) -> dict[str, Any]:
         source_registry_id=source_registry_id,
     )
     metadata_batch = load_metadata_payload(event_batch, batch_ref="request://drive_scanner")
+    refetch_enabled = _refetch_enabled(payload)
     metadata_batch = refetch_authoritative_batch(
         metadata_batch,
         service=drive_service,
-        refetch_enabled=True,
+        refetch_enabled=refetch_enabled,
     )
     write_enabled = _request_write_enabled(payload)
     write = write_metadata_batch(
@@ -107,6 +117,8 @@ def run_scan(payload: dict[str, Any]) -> dict[str, Any]:
         "write_requested": payload.get("write") is True,
         "write_enabled": write_enabled,
         "request_write_enabled": os.environ.get("REQUEST_WRITE_ENABLED", "false").lower() == "true",
+        "scan_mode": scan_mode,
+        "refetch_authoritative": refetch_enabled,
         "root_folder_ids": root_folder_ids,
         "inventory_counts": inventory["counts"],
         "metadata_counts": metadata_batch["counts"],
@@ -130,11 +142,26 @@ def _root_folder_ids(payload: dict[str, Any]) -> list[str]:
     return [item.strip() for item in str(raw).split(",") if item.strip()]
 
 
+def _scan_mode(payload: dict[str, Any]) -> str:
+    raw = str(payload.get("scan_mode") or os.environ.get("DRIVE_SCAN_MODE") or "roots").strip().lower()
+    if raw in {"all", "all_drive", "all-drives", "all_drives"}:
+        return "all_drive"
+    if raw in {"roots", "root", "folders"}:
+        return "roots"
+    raise ValueError("scan_mode must be roots or all_drive")
+
+
 def _request_write_enabled(payload: dict[str, Any]) -> bool:
     if os.environ.get("WRITE_ENABLED", "false").lower() == "true":
         return True
     request_write_allowed = os.environ.get("REQUEST_WRITE_ENABLED", "false").lower() == "true"
     return request_write_allowed and payload.get("write") is True
+
+
+def _refetch_enabled(payload: dict[str, Any]) -> bool:
+    if payload.get("refetch_authoritative") is True:
+        return True
+    return os.environ.get("DRIVE_REFETCH_ENABLED", "false").lower() == "true"
 
 
 def _bounded_int(value: Any, minimum: int, maximum: int) -> int:

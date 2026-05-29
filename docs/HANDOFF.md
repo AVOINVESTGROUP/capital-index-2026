@@ -35,7 +35,8 @@ authoritative decisions.
 Current immediate implementation direction:
 
 ```text
-1. Expand capital-drive-scanner beyond the single-root, 250-file MVP.
+1. capital-drive-scanner now supports all_drive inventory mode and Scheduler
+   uses {"write": true, "scan_mode": "all_drive", "max_files": 3000}.
 2. Persist scan state/page tokens in Firestore.
 3. Add Firestore-backed AI classifier proposal fields.
 4. Use Admin Web as the correction/control surface.

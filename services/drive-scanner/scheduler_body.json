@@ -1,1 +1,1 @@
-{"write":true,"max_files":250}
+{"write":true,"scan_mode":"all_drive","max_files":3000}
