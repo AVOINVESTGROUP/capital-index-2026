@@ -1,7 +1,12 @@
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { promisify } from "node:util";
-import type { ContextBundle, ContextBundleAction, ContextBundleStatus } from "./types";
+import type {
+  ContextBundle,
+  ContextBundleAction,
+  ContextBundleStatus,
+  VaultProjectionState,
+} from "./types";
 
 const execFileAsync = promisify(execFile);
 
@@ -117,10 +122,66 @@ export async function updateContextBundle(
     created_at: timestampValue(now),
   });
 
+  if (action === "approve") {
+    await publishApprovedMemory(existing, resolvedActor, now, note);
+  }
+
   return {
     actionId,
     previousStatus: bundle.approvalStatus,
     newStatus,
+  };
+}
+
+export async function getVaultProjectionState(): Promise<VaultProjectionState> {
+  const [memoryDoc, projectionDoc] = await Promise.all([
+    getDocument("approved_ai_memory", "current"),
+    getDocument("vault_projections", "current_second_brain"),
+  ]);
+  const generatedAt = new Date().toISOString();
+
+  if (!memoryDoc?.fields) {
+    return { generatedAt, status: "no_approved_memory" };
+  }
+
+  const memoryFields = memoryDoc.fields;
+  const memoryBody = readMap(memoryFields.body);
+  const memoryAi = readAiReading(memoryFields.ai_reading);
+  const approvedMemory = {
+    bundleId: readString(memoryFields.bundle_id) || readString(memoryFields.source_bundle_id),
+    bundleType: readString(memoryFields.bundle_type),
+    approvedAt: readString(memoryFields.approved_at) || readTimestamp(memoryFields.approved_at),
+    approvedBy: readString(memoryFields.approved_by),
+    sourceFileCount: readArray(memoryFields.source_file_ids).length,
+    claimCount: readArray(memoryBody.claim_ids).length,
+    entityCount: readArray(memoryBody.entity_ids).length,
+    relationshipCount: readArray(memoryBody.relationship_ids).length,
+    evidenceCount: readArray(memoryBody.evidence_ids).length,
+    aiReadingStatus: memoryAi?.status || "",
+    aiExecutiveSummary: memoryAi?.executiveSummary || "",
+  };
+
+  if (!projectionDoc?.fields) {
+    return { generatedAt, approvedMemory, status: "projection_missing" };
+  }
+
+  const projectionFields = projectionDoc.fields;
+  const projection = {
+    projectionId: readString(projectionFields.projection_id),
+    bundleId: readString(projectionFields.bundle_id),
+    path: readString(projectionFields.path),
+    title: readString(projectionFields.title),
+    content: readString(projectionFields.content),
+    writeStatus: readString(projectionFields.write_status),
+    requiresApproval: readBoolean(projectionFields.requires_approval),
+    createdAt: readString(projectionFields.created_at) || readTimestamp(projectionFields.created_at),
+  };
+
+  return {
+    generatedAt,
+    approvedMemory,
+    projection,
+    status: projection.bundleId === approvedMemory.bundleId ? "ready" : "projection_stale",
   };
 }
 
@@ -324,6 +385,47 @@ async function patchDocument(
   if (!response.ok) {
     throw new Error(`Firestore patch failed: ${response.status} ${await response.text()}`);
   }
+}
+
+async function setDocument(
+  collection: string,
+  id: string,
+  fields: Record<string, FirestoreValue>,
+): Promise<void> {
+  const token = await accessToken();
+  const response = await fetch(`${baseUrl()}/${collection}/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { ...authHeaders(token), "content-type": "application/json" },
+    body: JSON.stringify({ fields }),
+  });
+  if (!response.ok) {
+    throw new Error(`Firestore set failed: ${response.status} ${await response.text()}`);
+  }
+}
+
+async function publishApprovedMemory(
+  bundleDoc: FirestoreDocument,
+  actorId: string,
+  approvedAt: string,
+  note: string,
+): Promise<void> {
+  const fields = { ...(bundleDoc.fields || {}) };
+  const bundleId = readString(fields.bundle_id) || bundleDoc.name.split("/").pop() || "";
+  const approvedFields: Record<string, FirestoreValue> = {
+    ...fields,
+    schema_version: stringValue("capital.approved_ai_memory.v1"),
+    source_bundle_id: stringValue(bundleId),
+    approval_status: stringValue("approved"),
+    memory_status: stringValue("active"),
+    approved_at: timestampValue(approvedAt),
+    approved_by: stringValue(actorId),
+    review_note: stringValue(note.trim()),
+    updated_at: timestampValue(approvedAt),
+  };
+  await Promise.all([
+    setDocument("approved_ai_memory", bundleId, approvedFields),
+    setDocument("approved_ai_memory", "current", approvedFields),
+  ]);
 }
 
 async function createDocument(

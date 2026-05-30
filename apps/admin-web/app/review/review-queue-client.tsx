@@ -20,8 +20,10 @@ import CleanupQueuePanel from "./cleanup-queue-panel";
 import ContextBundlesPanel from "./context-bundles-panel";
 import KnowledgePanel from "./knowledge-panel";
 import ProgressDashboard from "./progress-dashboard";
+import RagPanel from "./rag-panel";
 import styles from "./review.module.css";
 import SourceFilesPanel from "./source-files-panel";
+import VaultPanel from "./vault-panel";
 
 const FILTERS = ["open", "approved", "rejected", "needs_content", "closed", "all"];
 
@@ -65,7 +67,7 @@ const ACTION_COPY: Record<ReviewAction, { title: string; status: string; detail:
   },
 };
 
-type QueueMode = "review" | "cleanup" | "sources" | "knowledge" | "bundles";
+type QueueMode = "review" | "cleanup" | "sources" | "knowledge" | "bundles" | "rag" | "vault";
 
 export default function ReviewQueueClient() {
   const [queueMode, setQueueMode] = useState<QueueMode>("knowledge");
@@ -293,6 +295,20 @@ export default function ReviewQueueClient() {
         >
           Context Bundles
         </button>
+        <button
+          className={queueMode === "rag" ? styles.modeTabActive : styles.modeTab}
+          onClick={() => setQueueMode("rag")}
+          type="button"
+        >
+          RAG Corpus
+        </button>
+        <button
+          className={queueMode === "vault" ? styles.modeTabActive : styles.modeTab}
+          onClick={() => setQueueMode("vault")}
+          type="button"
+        >
+          Vault
+        </button>
       </nav>
 
       <ProgressDashboard user={user} />
@@ -301,6 +317,8 @@ export default function ReviewQueueClient() {
       {queueMode === "sources" ? <SourceFilesPanel user={user} /> : null}
       {queueMode === "knowledge" ? <KnowledgePanel user={user} /> : null}
       {queueMode === "bundles" ? <ContextBundlesPanel user={user} /> : null}
+      {queueMode === "rag" ? <RagPanel user={user} /> : null}
+      {queueMode === "vault" ? <VaultPanel user={user} /> : null}
 
       {queueMode === "review" ? (
         <>
@@ -521,6 +539,10 @@ function titleForMode(mode: QueueMode) {
       return "Knowledge";
     case "bundles":
       return "Context Bundles";
+    case "rag":
+      return "RAG Corpus";
+    case "vault":
+      return "Vault";
     case "review":
     default:
       return "Review Queue";

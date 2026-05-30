@@ -78,6 +78,17 @@ content is placed between protected markers:
 Manual notes stay outside the generated block and are not overwritten by this
 service.
 
+## Vertex RAG Alignment
+
+The canonical second-brain knowledge plane is the Vertex RAG corpus
+`second-brain-vault` in project `capital-index-2026`, region `us-central1`.
+Context bundles and Vault projections are controlled memory snapshots built
+from approved Firestore state; they do not replace source-file retrieval from
+the RAG corpus.
+
+The saved Vertex prompt `second-brain-vault-base` should use the system
+instructions in `docs/SECOND_BRAIN_VERTEX_RAG_PROMPT.md`.
+
 ## Local Tests
 
 ```bash

@@ -88,3 +88,31 @@ export type ContextBundleListResponse = {
   count: number;
   generatedAt: string;
 };
+
+export type VaultProjectionState = {
+  generatedAt: string;
+  approvedMemory?: {
+    bundleId: string;
+    bundleType: string;
+    approvedAt: string;
+    approvedBy: string;
+    sourceFileCount: number;
+    claimCount: number;
+    entityCount: number;
+    relationshipCount: number;
+    evidenceCount: number;
+    aiReadingStatus: string;
+    aiExecutiveSummary: string;
+  };
+  projection?: {
+    projectionId: string;
+    bundleId: string;
+    path: string;
+    title: string;
+    content: string;
+    writeStatus: string;
+    requiresApproval: boolean;
+    createdAt: string;
+  };
+  status: "ready" | "no_approved_memory" | "projection_missing" | "projection_stale";
+};
